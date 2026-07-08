@@ -3,116 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Ahorro Diario</title>
+    <title>Garra Ahorro - Universitario</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Iconos e identidad -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="min-h-screen bg-gray-50 py-10 px-4 font-sans text-gray-800">
+<!-- Fondo crema claro texturizado de fondo -->
+<body class="min-h-screen bg-[#F7F4EB] py-8 px-4 font-sans text-[#2A2A2A]">
 
-    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+    <div class="max-w-md mx-auto bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-6 space-y-6 relative overflow-hidden">
         
-        <!-- Encabezado -->
-        <header class="text-center">
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Mi Progreso Diario</h1>
-            <p class="text-sm text-gray-500 mt-1">Define tu meta y acumula tus montos del día</p>
+        <!-- Detalle decorativo granate superior -->
+        <div class="absolute top-0 left-0 right-0 h-3 bg-[#7A1C2E]"></div>
+
+        <!-- Encabezado con Identidad Merengue -->
+        <header class="flex items-center justify-between pt-2">
+            <div class="flex items-center space-x-3">
+                <!-- Contenedor para la insignia/escudo -->
+                <div class="w-12 h-12 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-xl border-2 border-[#D4AF37] shadow-md">
+                    U
+                </div>
+                <div>
+                    <h1 class="text-xl font-black uppercase tracking-tight text-[#7A1C2E]">Garra Ahorro</h1>
+                    <p class="text-xs text-gray-500 font-medium">El dinero no se gasta, se cuida</p>
+                </div>
+            </div>
+            <!-- Mascota / Icono de aliento -->
+            <div class="text-3xl text-[#D4AF37] animate-pulse">
+                <i class="fas fa-trophy"></i>
+            </div>
         </header>
 
-        <!-- Configuración de la Meta -->
-        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2">
-            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider">Configurar Meta del Día (S/)</label>
+        <!-- Frase Motivacional Dinámica (Garra Crema) -->
+        <div class="bg-[#7A1C2E] text-[#F7F4EB] p-3 rounded-xl text-center text-xs font-bold tracking-wide uppercase shadow-sm">
+            <span id="txt-frase">"¡Y dale U toda la vida! Fija tu meta hoy"</span>
+        </div>
+
+        <!-- Configuración de la Meta Diaria -->
+        <div class="bg-[#F7F4EB] p-4 rounded-2xl border border-[#E6DFCE] space-y-2">
+            <label class="block text-[11px] font-extrabold text-[#7A1C2E] uppercase tracking-wider">Meta del Día (S/)</label>
             <div class="flex space-x-2">
                 <input 
                     type="number" 
                     id="meta-input" 
-                    placeholder="Ej. 100.00" 
-                    class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 text-sm font-medium"
+                    placeholder="Ej. 50.00" 
+                    class="flex-1 px-4 py-2.5 bg-white border border-[#E6DFCE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-bold"
                 />
                 <button 
                     id="btn-fijar-meta" 
-                    class="bg-gray-900 text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors cursor-pointer"
+                    class="bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-sm"
                 >
                     Fijar Meta
                 </button>
             </div>
         </div>
 
-        <!-- Panel de Progreso Visual y Barra -->
-        <div class="bg-gray-950 text-white rounded-xl p-5 shadow-inner space-y-4">
+        <!-- Panel del Estadio / Progreso Monumental -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-[#7A1C2E] shadow-md space-y-4 relative">
             <div class="flex justify-between items-end">
                 <div>
-                    <span class="text-xs uppercase tracking-wider text-gray-400 font-medium">Acumulado Hoy</span>
-                    <h2 id="txt-acumulado" class="text-3xl font-extrabold mt-0.5">S/ 0.00</h2>
+                    <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Asegurado Hoy</span>
+                    <h2 id="txt-acumulado" class="text-3xl font-black text-[#7A1C2E] mt-0.5">S/ 0.00</h2>
                 </div>
                 <div class="text-right">
-                    <span class="text-xs uppercase tracking-wider text-gray-400 font-medium">Meta del Día</span>
-                    <h3 id="txt-meta" class="text-lg font-bold text-gray-200 mt-0.5">S/ 0.00</h3>
+                    <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Objetivo</span>
+                    <h3 id="txt-meta" class="text-lg font-bold text-[#2A2A2A] mt-0.5">S/ 0.00</h3>
                 </div>
             </div>
 
-            <!-- Barra de progreso -->
-            <div class="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
-                <div id="barra-progreso" class="bg-emerald-500 h-full w-0 transition-all duration-500 ease-out"></div>
+            <!-- Barra de progreso Granate y Oro -->
+            <div class="w-full bg-[#F7F4EB] rounded-full h-4 overflow-hidden border border-[#E6DFCE] p-0.5">
+                <div id="barra-progreso" class="bg-gradient-to-r from-[#7A1C2E] to-[#A62B42] h-full w-0 rounded-full transition-all duration-700 ease-out"></div>
             </div>
             
-            <div class="flex justify-between text-[11px] text-gray-400 font-medium">
-                <span id="txt-porcentaje">0% alcanzado</span>
-                <span id="txt-restante">Faltan S/ 0.00</span>
+            <div class="flex justify-between text-xs font-bold">
+                <span id="txt-porcentaje" class="text-[#7A1C2E]">0% Garra</span>
+                <span id="txt-restante" class="text-[#D4AF37] font-extrabold">Faltan S/ 0.00</span>
             </div>
         </div>
 
-        <!-- Formulario para Registrar Montos -->
-        <div class="space-y-4">
-            <div>
-                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Monto a subir (S/)</label>
+        <!-- Formulario de Inyección de Ahorro -->
+        <div class="space-y-3">
+            <label class="block text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">¿Cuánto vas a sumar al marcador?</label>
+            <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-xl text-gray-400">S/</span>
                 <input
                     type="number"
                     id="monto-subir"
                     step="0.01"
                     placeholder="0.00"
-                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all text-lg font-bold text-center"
+                    class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#E6DFCE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] focus:border-[#7A1C2E] text-2xl font-black text-center text-[#7A1C2E]"
                 />
             </div>
 
             <button
                 id="btn-ahorrar"
                 type="button"
-                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-lg transition-colors shadow-sm active:scale-[0.99] transform cursor-pointer tracking-wide uppercase text-sm"
+                class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-4 rounded-xl transition-all shadow-md active:scale-[0.98] transform tracking-widest uppercase text-sm cursor-pointer border-b-4 border-[#4D0F1A]"
             >
-                💰 Ahorré Hoy
+                💪 ¡Ahorré Hoy!
             </button>
         </div>
 
-        <!-- Historial Simple -->
-        <div class="space-y-3 pt-2 border-t border-gray-100">
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Depósitos del día</h4>
-            <div id="historial-lista" class="max-h-40 overflow-y-auto space-y-2 pr-1">
-                <!-- Se llena dinámicamente -->
+        <!-- Historial / Tribuna de Movimientos -->
+        <div class="space-y-2 pt-2 border-t border-[#E6DFCE]">
+            <h4 class="text-[11px] font-black text-gray-400 uppercase tracking-wider flex items-center justify-between">
+                <span>Minuto a Minuto (Hoy)</span>
+                <i class="fas fa-history"></i>
+            </h4>
+            <div id="historial-lista" class="max-h-36 overflow-y-auto space-y-1.5 pr-1 text-xs">
+                <!-- Dinámico -->
             </div>
         </div>
 
-        <!-- Botón de reinicio absoluto -->
-        <div class="text-center pt-2">
+        <!-- Zona de reinicio -->
+        <div class="text-center pt-1">
             <button 
                 id="btn-limpiar-todo" 
-                class="text-xs text-gray-400 hover:text-red-500 font-medium transition-colors underline cursor-pointer"
+                class="text-[10px] text-gray-400 hover:text-[#7A1C2E] font-bold transition-colors uppercase tracking-wider cursor-pointer"
             >
-                Limpiar datos antiguos y empezar de 0
+                <i class="fas fa-trash-alt mr-1"></i> Reiniciar marcador a 0
             </button>
         </div>
 
     </div>
 
     <script>
-        // Claves exclusivas de almacenamiento para evitar mezclas
-        const KEY_ACUMULADO = 'ahorro_diario_acumulado';
-        const KEY_META = 'ahorro_diario_meta';
-        const KEY_HISTORIAL = 'ahorro_diario_historial';
+        const KEY_ACUMULADO = 'u_ahorro_acumulado';
+        const KEY_META = 'u_ahorro_meta';
+        const KEY_HISTORIAL = 'u_ahorro_historial';
 
-        // Cargar datos iniciales o empezar estrictamente en 0
         let acumulado = parseFloat(localStorage.getItem(KEY_ACUMULADO)) || 0.00;
         let meta = parseFloat(localStorage.getItem(KEY_META)) || 0.00;
         let historial = JSON.parse(localStorage.getItem(KEY_HISTORIAL)) || [];
 
-        // Elementos del DOM
+        // Frases de aliento de la U según el porcentaje
+        const frasesCrema = {
+            inicio: "¡Y dale U toda la vida! Fija tu meta y ponle garra.",
+            proceso: "A paso firme... ¡Porque a la U la hace grande su gente!",
+            mitad: "¡Vamos merengues! Ya pasamos la mitad del partido de hoy.",
+            casi: "¡Garra Crema pura! Falta el último aliento para ganar.",
+            campeon: "¡Finaaaal del partido! ¡Meta cumplida, somos campeones! 🏆"
+        };
+
         const metaInput = document.getElementById('meta-input');
         const btnFijarMeta = document.getElementById('btn-fijar-meta');
         const montoSubir = document.getElementById('monto-subir');
@@ -124,20 +157,17 @@
         const barraProgreso = document.getElementById('barra-progreso');
         const txtPorcentaje = document.getElementById('txt-porcentaje');
         const txtRestante = document.getElementById('txt-restante');
+        const txtFrase = document.getElementById('txt-frase');
         const historialLista = document.getElementById('historial-lista');
 
-        // Función para actualizar y renderizar todos los cálculos en la pantalla
         function actualizarInterfaz() {
-            // Guardar en almacenamiento local
             localStorage.setItem(KEY_ACUMULADO, acumulado.toString());
             localStorage.setItem(KEY_META, meta.toString());
             localStorage.setItem(KEY_HISTORIAL, JSON.stringify(historial));
 
-            // Imprimir textos principales
             txtAcumulado.textContent = `S/ ${acumulado.toFixed(2)}`;
             txtMeta.textContent = `S/ ${meta.toFixed(2)}`;
 
-            // Calcular porcentaje y restante
             let porcentaje = 0;
             if (meta > 0) {
                 porcentaje = Math.min((acumulado / meta) * 100, 100);
@@ -146,33 +176,43 @@
             let restante = meta - acumulado;
             if (restante < 0) restante = 0;
 
-            // Actualizar elementos visuales de la barra
             barraProgreso.style.width = `${porcentaje}%`;
-            txtPorcentaje.textContent = `${Math.round(porcentaje)}% alcanzado`;
-            txtRestante.textContent = restante > 0 ? `Faltan S/ ${restante.toFixed(2)}` : '¡Meta cumplida! 🎉';
+            txtPorcentaje.textContent = `${Math.round(porcentaje)}% Garra`;
+            
+            if (restante > 0) {
+                txtRestante.textContent = `Faltan S/ ${restante.toFixed(2)}`;
+            } else {
+                txtRestante.textContent = '¡Meta Cumplida! 🌟';
+            }
 
-            // Renderizar lista del historial inferior
+            // Manejo dinámico de las frases merengues
+            if (meta === 0) txtFrase.textContent = frasesCrema.inicio;
+            else if (porcentaje >= 100) txtFrase.textContent = frasesCrema.campeon;
+            else if (porcentaje >= 80) txtFrase.textContent = frasesCrema.casi;
+            else if (porcentaje >= 50) txtFrase.textContent = frasesCrema.mitad;
+            else txtFrase.textContent = frasesCrema.proceso;
+
+            // Renderizar la tribuna del historial
             historialLista.innerHTML = '';
             if (historial.length === 0) {
-                historialLista.innerHTML = `<p class="text-xs text-gray-400 text-center py-2">Ningún movimiento hoy.</p>`;
+                historialLista.innerHTML = `<p class="text-gray-400 text-center py-2 italic">Marcador en 0. Sin ahorros registrados hoy.</p>`;
             } else {
                 historial.forEach(item => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.className = "flex justify-between items-center bg-gray-50 px-3 py-2 rounded-lg text-xs border border-gray-100";
+                    itemDiv.className = "flex justify-between items-center bg-white px-3 py-2 rounded-xl border border-[#E6DFCE] font-medium";
                     itemDiv.innerHTML = `
-                        <span class="text-gray-400 font-mono">${item.hora}</span>
-                        <span class="font-bold text-gray-900">+ S/ ${parseFloat(item.monto).toFixed(2)}</span>
+                        <span class="text-gray-400 font-mono text-[10px]"><i class="far fa-clock mr-1 text-[#7A1C2E]"></i>${item.hora}</span>
+                        <span class="font-black text-[#7A1C2E]">+ S/ ${parseFloat(item.monto).toFixed(2)}</span>
                     `;
                     historialLista.appendChild(itemDiv);
                 });
             }
         }
 
-        // Acción: Fijar la Meta Diaria
         btnFijarMeta.addEventListener('click', () => {
             const valorMeta = parseFloat(metaInput.value);
             if (isNaN(valorMeta) || valorMeta <= 0) {
-                alert("Por favor, ingresa una meta válida mayor a 0.");
+                alert("Ingresa una meta válida.");
                 return;
             }
             meta = valorMeta;
@@ -180,33 +220,25 @@
             actualizarInterfaz();
         });
 
-        // Acción: Agregar Monto usando el botón "Ahorré Hoy"
         btnAhorrar.addEventListener('click', () => {
             const valorMonto = parseFloat(montoSubir.value);
-            
             if (isNaN(valorMonto) || valorMonto <= 0) {
-                alert("Por favor, ingresa un monto válido a sumar.");
+                alert("Ingresa un monto válido para sumar.");
                 return;
             }
 
-            // Sumar al total acumulado de la barra
             acumulado += valorMonto;
 
-            // Guardar en el mini historial
             const ahora = new Date();
-            const horaFormateada = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const horaFormateada = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
             historial.unshift({ hora: horaFormateada, monto: valorMonto });
 
-            // Limpiar caja de entrada
             montoSubir.value = '';
-            
-            // Actualizar la vista de inmediato
             actualizarInterfaz();
         });
 
-        // Acción: Forzar reinicio de fábrica para eliminar memoria vieja del caché
         btnLimpiarTodo.addEventListener('click', () => {
-            if (confirm("¿Quieres limpiar todo el historial y empezar con la app en 0?")) {
+            if (confirm("¿Reiniciar el marcador y empezar el partido desde 0?")) {
                 localStorage.removeItem(KEY_ACUMULADO);
                 localStorage.removeItem(KEY_META);
                 localStorage.removeItem(KEY_HISTORIAL);
@@ -217,7 +249,6 @@
             }
         });
 
-        // Inicialización en el primer arranque
         actualizarInterfaz();
     </script>
 </body>
