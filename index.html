@@ -3,328 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bolsillo+ | Tu Meta Diaria</title>
-    <!-- Tailwind CSS para diseño moderno -->
+    <title>Control de Montos</title>
+    <!-- Tailwind CSS CDN para estilos rápidos y limpios -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js para Estadísticas de Ahorro -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        /* Efecto Visual Potente: Imagen de fondo con degradado oscuro inmersivo */
-        .hero-bg {
-            background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-        /* Tarjeta Semitransparente Glassmorphism requested */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .dark .glass-card {
-            background: rgba(15, 23, 42, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        @keyframes pulse-slow {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        .animate-piggy {
-            animation: pulse-slow 3s infinite ease-in-out;
-        }
-        @keyframes bounce-click {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(0.92); }
-        }
-        .btn-active:active {
-            animation: bounce-click 0.2s ease-in-out;
-        }
-    </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen pb-24 dark:bg-slate-950 dark:text-slate-100">
+<body class="min-h-screen bg-gray-50 py-10 px-4 font-sans text-gray-800">
 
-    <!-- HERO SECTION (HOME PRINCIPAL CON ENFOQUE EN LA META) -->
-    <div class="relative w-full h-[62vh] hero-bg flex flex-col justify-between p-6 text-white overflow-hidden rounded-b-[2.5rem] shadow-2xl">
-        <!-- Header Superior -->
-        <div class="flex justify-between items-center z-10 w-full max-w-md mx-auto pt-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                    <i class="fa-solid fa-piggy-bank text-lg"></i>
-                </div>
-                <div>
-                    <h1 class="text-xs text-slate-300 font-medium">¡Hola, Luis!</h1>
-                    <p class="text-sm font-bold tracking-tight text-emerald-400">Bolsillo+</p>
-                </div>
-            </div>
-            <button id="theme-toggle" class="w-10 h-10 rounded-full glass-card flex items-center justify-center hover:bg-white/20 transition-all">
-                <i class="fa-solid fa-moon text-lg"></i>
-            </button>
-        </div>
-
-        <!-- Coach Financiero Efímero -->
-        <div class="z-10 w-full max-w-md mx-auto my-auto text-center px-4">
-            <div class="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1.5 rounded-full text-xs text-emerald-300 font-medium mb-3 glass-card">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Coach: <span id="coach-tip">Visualiza caminar por Shibuya. S/18 es un paso más cerca.</span>
-            </div>
-        </div>
-
-        <!-- Tarjeta de Meta Semitransparente -->
-        <div class="glass-card w-full max-w-md mx-auto p-5 rounded-3xl z-10 shadow-xl mb-[-20px] transform translate-y-4">
-            <div class="flex justify-between items-start mb-2">
-                <div>
-                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest">Mi Objetivo</span>
-                    <h2 class="text-xl font-bold flex items-center gap-2 mt-0.5">✈️ Viaje a Japón</h2>
-                </div>
-                <span id="meta-percent" class="text-xl font-black text-emerald-400">42%</span>
-            </div>
-            
-            <!-- Barra de Progreso Animada -->
-            <div class="w-full bg-white/10 h-3 rounded-full overflow-hidden mb-4 border border-white/5">
-                <div id="progress-bar" class="bg-gradient-to-r from-emerald-400 to-teal-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: 42%"></div>
-            </div>
-
-            <p class="text-sm text-slate-200 leading-relaxed">
-                Ya has recorrido el <span class="font-bold text-white">42%</span> del camino. <br>
-                Hoy solo necesitas ahorrar <span class="font-bold text-emerald-300 text-base">S/ 18</span> para acercarte un poco más.
-            </p>
-        </div>
-    </div>
-
-    <!-- ÁREA DE CONTENIDO Y ACCIONES -->
-    <main class="max-w-md mx-auto px-6 pt-10 space-y-6">
+    <div class="max-w-md mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         
-        <!-- CONTROLADORES PRINCIPALES Y ALCANCÍA -->
-        <div class="grid grid-cols-5 gap-4 items-center bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800/50">
-            <!-- Botón Principal "Ahorré Hoy" -->
-            <button id="btn-save-today" class="btn-active col-span-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all flex flex-col items-center justify-center gap-1">
-                <span class="text-lg"><i class="fa-solid fa-circle-check"></i> ¡Ahorré hoy!</span>
-                <span class="text-xs font-normal opacity-90">Meta diaria (S/18)</span>
-            </button>
-            
-            <!-- Mascota Interactiva (Alcancía) -->
-            <div class="col-span-2 flex flex-col items-center justify-center">
-                <div id="piggy-mascot" class="animate-piggy text-4xl text-pink-400 cursor-pointer filter drop-shadow-md transition-all duration-300">
-                    🐷
-                </div>
-                <span id="mascot-bubble" class="text-[10px] text-center font-medium text-slate-500 dark:text-slate-400 mt-1.5">¡Aliméntame!</span>
-            </div>
+        <!-- Encabezado -->
+        <header class="mb-6 text-center">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Control de Montos</h1>
+            <p class="text-sm text-gray-500 mt-1">Registra y administra tus montos guardados localmente</p>
+        </header>
+
+        <!-- Balance Total -->
+        <div class="bg-gray-900 text-white rounded-xl p-5 mb-6 text-center shadow-inner">
+            <span class="text-xs uppercase tracking-wider text-gray-400 font-medium">Total Acumulado</span>
+            <h2 id="total-acumulado" class="text-3xl font-extrabold mt-1">S/ 0.00</h2>
         </div>
 
-        <!-- AGREGAR MONTO PERSONALIZADO -->
-        <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800/50 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-500">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold">Monto Extra</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">¿Guardaste algo extra hoy?</p>
-                </div>
+        <!-- Formulario de Registro -->
+        <form id="formulario-registro" class="space-y-4 mb-8">
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Monto (S/)</label>
+                <input
+                    type="number"
+                    id="monto-input"
+                    step="0.01"
+                    placeholder="0.00"
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all text-lg font-medium"
+                    required
+                />
             </div>
-            <button id="btn-add-custom" class="btn-active px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-xs font-bold rounded-xl transition-all">
-                + Agregar Dinero
-            </button>
-        </div>
 
-        <!-- MÓDULO DE ESTADÍSTICAS REALES -->
-        <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800/50 space-y-4">
-            <h3 class="text-sm font-bold flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <i class="fa-solid fa-chart-pie text-emerald-500"></i> Mi Progreso Real
+            <div>
+                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Concepto / Detalle</label>
+                <input
+                    type="text"
+                    id="concepto-input"
+                    placeholder="Ej. Pago de servicios, herramientas, etc."
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:bg-white transition-all text-sm"
+                />
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-gray-900 text-white font-medium py-3 rounded-lg hover:bg-gray-800 transition-colors shadow-sm active:scale-[0.98] transform cursor-pointer"
+            >
+                Agregar Registro
+            </button>
+        </form>
+
+        <!-- Historial de Registros -->
+        <div class="space-y-3">
+            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-2">
+                Historial de Movimientos
             </h3>
-            
-            <div class="grid grid-cols-3 gap-2.5 text-center">
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400 block mb-0.5">Total Guardado</span>
-                    <span id="stat-total" class="text-sm font-black text-emerald-600 dark:text-emerald-400">S/ 2,100</span>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400 block mb-0.5">Racha Actual</span>
-                    <span id="stat-streak" class="text-sm font-black text-amber-500"><i class="fa-solid fa-fire"></i> 5 días</span>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
-                    <span class="text-[10px] text-slate-500 dark:text-slate-400 block mb-0.5">Faltan</span>
-                    <span id="stat-remaining" class="text-sm font-black text-slate-700 dark:text-slate-300">S/ 2,900</span>
-                </div>
-            </div>
 
-            <!-- Gráfico Dinámico -->
-            <div class="w-full h-36 pt-2">
-                <canvas id="evolutionChart"></canvas>
+            <!-- Contenedor dinámico de la lista -->
+            <div id="historial-contenedor" class="max-h-64 overflow-y-auto pr-1 space-y-2">
+                <!-- Se llena mediante JavaScript -->
             </div>
         </div>
-    </main>
 
-    <!-- BANNER DE NAVEGACIÓN ESTILO NATIVO MOBILE -->
-    <nav class="fixed bottom-0 left-0 right-0 glass-card bg-white/90 dark:bg-slate-900/90 border-t border-slate-200/50 dark:border-slate-800/50 px-8 py-3 z-50 rounded-t-3xl max-w-md mx-auto">
-        <div class="flex justify-around items-center">
-            <button class="flex flex-col items-center gap-1 text-emerald-500">
-                <i class="fa-solid fa-house text-lg"></i>
-                <span class="text-[10px] font-bold">Home</span>
-            </button>
-            <button class="flex flex-col items-center gap-1 text-slate-400">
-                <i class="fa-solid fa-chart-line text-lg"></i>
-                <span class="text-[10px] font-medium">Métricas</span>
-            </button>
-            <button class="flex flex-col items-center gap-1 text-slate-400">
-                <i class="fa-solid fa-piggy-bank text-lg"></i>
-                <span class="text-[10px] font-medium">Mascota</span>
-            </button>
-            <button class="flex flex-col items-center gap-1 text-slate-400">
-                <i class="fa-solid fa-moon text-lg"></i>
-                <span class="text-[10px] font-medium">Sueño</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- TOAST DE CELEBRACIÓN -->
-    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3 opacity-0 pointer-events-none transition-all duration-300 text-sm font-semibold border border-slate-800 dark:border-slate-100">
-        <span>🎉</span>
-        <span id="toast-message">¡Ahorro registrado! Un paso más cerca.</span>
     </div>
 
-    <!-- LOGICA DE BASE DE DATOS Y REACTIVIDAD -->
+    <!-- Lógica de control con Vanilla JS -->
     <script>
-        // --- BASE DE DATOS LOCAL SIMULADA (LocalStorage) ---
-        const DB_KEY = 'bolsillo_plus_db';
-        const DEFAULT_DATA = {
-            totalAhorrado: 2100,
-            metaTotal: 5000,
-            racha: 5,
-            historial: [1500, 1650, 1800, 1920, 2010, 2100],
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun']
-        };
+        // 1. Inicializar arreglo de registros leyendo el localStorage (empieza vacío [] si no hay datos)
+        let registros = JSON.parse(localStorage.getItem('control_gastos_montos')) || [];
 
-        function getDB() {
-            const data = localStorage.getItem(DB_KEY);
-            return data ? JSON.parse(data) : DEFAULT_DATA;
-        }
+        // Referencias del DOM
+        const formulario = document.getElementById('formulario-registro');
+        const montoInput = document.getElementById('monto-input');
+        const conceptoInput = document.getElementById('concepto-input');
+        const historialContenedor = document.getElementById('historial-contenedor');
+        const totalAcumuladoTxt = document.getElementById('total-acumulado');
 
-        function saveDB(data) {
-            localStorage.setItem(DB_KEY, JSON.stringify(data));
-        }
+        // 2. Función para renderizar la lista e interfaz en pantalla
+        function renderizar() {
+            // Limpiar contenedor
+            historialContenedor.innerHTML = '';
 
-        let appState = getDB();
-        let chartInstance = null;
-
-        const tips = [
-            "Cada sol guardado hoy te ahorra dolores de cabeza mañana. ✈️",
-            "La constancia vence a la cantidad. ¡Sigue así, Luis!",
-            "¡Esa alcancía tiene hambre de tus metas en Japón! 🇯🇵",
-            "Visualiza caminar por Shibuya. S/18 es un paso más cerca.",
-            "¡Meta diaria activa! Un pequeño esfuerzo hoy rinde frutos siempre."
-        ];
-
-        // --- MANIPULACIÓN DEL DOM / RENDER ---
-        function updateUI() {
-            const percent = Math.min(100, Math.round((appState.totalAhorrado / appState.metaTotal) * 100));
-            
-            document.getElementById('meta-percent').innerText = `${percent}%`;
-            document.getElementById('progress-bar').style.width = `${percent}%`;
-            document.getElementById('stat-total').innerText = `S/ ${appState.totalAhorrado}`;
-            document.getElementById('stat-streak').innerHTML = `<i class="fa-solid fa-fire"></i> ${appState.racha} días`;
-            document.getElementById('stat-remaining').innerText = `S/ ${Math.max(0, appState.metaTotal - appState.totalAhorrado)}`;
-            
-            document.getElementById('coach-tip').innerText = tips[Math.floor(Math.random() * tips.length)];
-            
-            if (chartInstance) {
-                chartInstance.data.datasets[0].data = appState.historial;
-                chartInstance.update();
+            // Si está vacío, mostrar el diseño de estado inicial cero
+            if (registros.length === 0) {
+                historialContenedor.innerHTML = `
+                    <div class="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                        <p class="text-sm text-gray-400 font-medium">No hay registros guardados.</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Empieza ingresando un monto arriba.</p>
+                    </div>
+                `;
+                totalAcumuladoTxt.textContent = 'S/ 0.00';
+                return;
             }
-        }
 
-        function triggerCelebration() {
-            const toast = document.getElementById('toast');
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            toast.classList.add('opacity-100');
-            
-            const piggy = document.getElementById('piggy-mascot');
-            const bubble = document.getElementById('mascot-bubble');
-            piggy.innerText = '🤩';
-            bubble.innerText = '¡Yummy! ¡Gracias!';
-            piggy.style.transform = 'scale(1.3) rotate(10deg)';
+            // Calcular y formatear el total acumulado
+            const total = registros.reduce((sum, item) => sum + parseFloat(item.monto), 0).toFixed(2);
+            totalAcumuladoTxt.textContent = `S/ ${total}`;
 
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0', 'pointer-events-none');
-                piggy.innerText = '🐷';
-                bubble.innerText = '¡Sigue así!';
-                piggy.style.transform = 'scale(1) rotate(0deg)';
-            }, 2500);
-        }
-
-        // --- INTERACCIONES ---
-        document.getElementById('btn-save-today').addEventListener('click', () => {
-            appState.totalAhorrado += 18;
-            appState.racha += 1;
-            appState.historial[appState.historial.length - 1] = appState.totalAhorrado;
-
-            saveDB(appState);
-            updateUI();
-            triggerCelebration();
-        });
-
-        document.getElementById('btn-add-custom').addEventListener('click', () => {
-            const val = prompt("¿Cuánto deseas agregar extra a tu meta? (S/):", "50");
-            const parsed = parseFloat(val);
-            if (!isNaN(parsed) && parsed > 0) {
-                appState.totalAhorrado += parsed;
-                appState.historial[appState.historial.length - 1] = appState.totalAhorrado;
-                saveDB(appState);
-                updateUI();
-                triggerCelebration();
-            }
-        });
-
-        // Modo Oscuro
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        themeToggleBtn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            const icon = themeToggleBtn.querySelector('i');
-            icon.className = document.documentElement.classList.contains('dark') ? 
-                'fa-solid fa-sun text-lg text-amber-400' : 'fa-solid fa-moon text-lg';
-        });
-
-        // Gráfico inicializador
-        function initChart() {
-            const ctx = document.getElementById('evolutionChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: appState.labels,
-                    datasets: [{
-                        data: appState.historial,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.05)',
-                        borderWidth: 2.5,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 9 } } },
-                        y: { grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#64748b', font: { size: 9 } } }
-                    }
-                }
+            // Insertar los elementos del historial
+            registros.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 hover:border-gray-200 transition-all group";
+                div.innerHTML = `
+                    <div>
+                        <p class="text-sm font-semibold text-gray-800">${item.concepto}</p>
+                        <span class="text-[10px] text-gray-400 font-mono block mt-0.5">${item.fecha}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm font-bold text-gray-900">S/ ${item.monto}</span>
+                        <button
+                            type="button"
+                            onclick="eliminarRegistro(${item.id})"
+                            class="text-gray-400 hover:text-red-500 text-xs font-medium p-1 transition-colors cursor-pointer"
+                            title="Eliminar"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                `;
+                historialContenedor.appendChild(div);
             });
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            updateUI();
+        // 3. Manejador para agregar un nuevo registro
+        formulario.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const montoVal = parseFloat(montoInput.value);
+            const conceptoVal = conceptoInput.value.trim() || 'Registro sin concepto';
+
+            if (isNaN(montoVal) || montoVal <= 0) {
+                alert("Por favor, ingresa un monto válido.");
+                return;
+            }
+
+            // Crear objeto del nuevo movimiento
+            const nuevoRegistro = {
+                id: Date.now(),
+                monto: montoVal.toFixed(2),
+                concepto: conceptoVal,
+                fecha: new Date().toLocaleDateString('es-PE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+
+            // Insertar al inicio de la lista, guardar en LocalStorage y renderizar
+            registros.unshift(nuevoRegistro);
+            localStorage.setItem('control_gastos_montos', JSON.stringify(registros));
+            
+            // Limpiar inputs
+            montoInput.value = '';
+            conceptoInput.value = '';
+
+            renderizar();
         });
+
+        // 4. Función global para eliminar un movimiento
+        window.eliminarRegistro = function(id) {
+            registros = registros.filter(item => item.id !== id);
+            
+            if (registros.length === 0) {
+                localStorage.removeItem('control_gastos_montos');
+            } else {
+                localStorage.setItem('control_gastos_montos', JSON.stringify(registros));
+            }
+            
+            renderizar();
+        };
+
+        // Renderizado inicial al cargar la página por primera vez
+        renderizar();
     </script>
 </body>
 </html>
