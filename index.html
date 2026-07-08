@@ -3,20 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garra Ahorro v2 - Universitario</title>
+    <title>Garra Ahorro Personalizado - Universitario</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Tipografía con fuerza para los marcadores */
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&display=swap');
         .font-tribuna { font-family: 'Montserrat', sans-serif; }
     </style>
 </head>
-<body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A]">
+<body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A] relative">
 
+    <!-- PANTALLA DE REGISTRO INICIAL (Se muestra solo la primera vez) -->
+    <div id="pantalla-registro" class="hidden fixed inset-0 bg-[#7A1C2E] z-50 flex items-center justify-center p-4">
+        <div class="bg-[#FDFBF7] rounded-3xl p-6 max-w-sm w-full border-2 border-[#D4AF37] text-center space-y-5 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-2xl border-2 border-[#D4AF37] shadow-md font-tribuna mx-auto">
+                U
+            </div>
+            <div class="space-y-1">
+                <h2 class="text-xl font-black text-[#7A1C2E] uppercase font-tribuna">¡Bienvenido Merengue!</h2>
+                <p class="text-xs text-gray-500 font-medium">Registra tu nombre para empezar a controlar tus finanzas con Garra.</p>
+            </div>
+            <div class="space-y-3">
+                <input 
+                    type="text" 
+                    id="nombre-usuario-input" 
+                    placeholder="Tu nombre o apodo" 
+                    class="w-full px-4 py-3 bg-[#F7F4EB] border border-[#E6DFCE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] font-bold text-center text-sm"
+                />
+                <button 
+                    id="btn-guardar-nombre"
+                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-3 rounded-xl uppercase text-xs tracking-wider font-tribuna cursor-pointer shadow-md border-b-4 border-[#4D0F1A]"
+                >
+                    Saltar a la Cancha 👟
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PRINCIPAL (Aplicación) -->
     <div class="max-w-md mx-auto bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-5 relative overflow-hidden">
         
-        <!-- Franja Granate Institucional -->
+        <!-- Franja Granate -->
         <div class="absolute top-0 left-0 right-0 h-3 bg-[#7A1C2E]"></div>
 
         <!-- Encabezado Principal -->
@@ -26,8 +53,9 @@
                     U
                 </div>
                 <div>
+                    <!-- El nombre aparecerá aquí dinámicamente -->
                     <h1 class="text-lg font-black uppercase tracking-tight text-[#7A1C2E] font-tribuna">Garra Ahorro</h1>
-                    <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Marcador de finanzas personales</p>
+                    <p id="txt-saludo" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Marcador de Ahorro</p>
                 </div>
             </div>
             <div class="text-2xl text-[#D4AF37]">
@@ -35,9 +63,8 @@
             </div>
         </header>
 
-        <!-- Zona de la Mascota "Garrita" Animada y Dinámica -->
-        <div id="contenedor-mascota" class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] flex items-center space-x-4 shadow-md border border-[#4D0F1A]">
-            <!-- Avatar Visual de la Mascota usando Iconos Interactivos -->
+        <!-- Zona de la Mascota "Garrita" Animada -->
+        <div class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] flex items-center space-x-4 shadow-md border border-[#4D0F1A]">
             <div class="w-16 h-16 rounded-full bg-[#FDFBF7] border-2 border-[#D4AF37] flex items-center justify-center text-3xl shadow-inner shrink-0">
                 <span id="mascota-emoji">🦁</span>
             </div>
@@ -45,9 +72,8 @@
                 <div class="bg-[#D4AF37] text-[#7A1C2E] text-[10px] font-black uppercase px-2 py-0.5 rounded w-max tracking-wider">
                     Garrita Dice:
                 </div>
-                <!-- Frase motivacional e identidad merengue -->
                 <p id="txt-frase" class="text-xs font-bold leading-tight italic text-gray-100">
-                    "¡Y dale U toda la vida! Fija tu meta para arrancar el partido hoy."
+                    Cargando alineación...
                 </p>
             </div>
         </div>
@@ -71,7 +97,7 @@
             </div>
         </div>
 
-        <!-- Panel del Estadio Monumental / Progreso Visual -->
+        <!-- Panel de Progreso Visual -->
         <div class="bg-white rounded-2xl p-4 border-2 border-[#7A1C2E] shadow-sm space-y-3">
             <div class="flex justify-between items-end">
                 <div>
@@ -95,12 +121,11 @@
             </div>
         </div>
 
-        <!-- Formulario Inyección de Ahorro con Razón/Descripción -->
+        <!-- Formulario Inyección de Ahorro -->
         <div class="bg-white p-4 rounded-xl border border-[#E6DFCE] space-y-3 shadow-inner">
             <h4 class="text-center text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Anotar Nuevo Monto Ahorrado</h4>
             
             <div class="grid grid-cols-3 gap-2">
-                <!-- Entrada de Monto -->
                 <div class="col-span-1 relative">
                     <span class="absolute left-2 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-400">S/</span>
                     <input
@@ -111,7 +136,6 @@
                         class="w-full pl-6 pr-1 py-2.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-black text-[#7A1C2E]"
                     />
                 </div>
-                <!-- Entrada de Descripción/Razón -->
                 <div class="col-span-2">
                     <input
                         type="text"
@@ -131,7 +155,7 @@
             </button>
         </div>
 
-        <!-- Minuto a Minuto con Descripción Integrada -->
+        <!-- Historial -->
         <div class="space-y-2 pt-1 border-t border-[#E6DFCE]">
             <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center justify-between">
                 <span>Historial en la Tribuna</span>
@@ -148,30 +172,30 @@
                 id="btn-limpiar-todo" 
                 class="text-[9px] text-gray-400 hover:text-red-600 font-bold transition-colors uppercase tracking-wider cursor-pointer"
             >
-                <i class="fas fa-undo-alt mr-1"></i> Reiniciar marcador a cero
+                <i class="fas fa-undo-alt mr-1"></i> Borrar Todo y cambiar de jugador
             </button>
         </div>
 
     </div>
 
     <script>
-        const KEY_ACUMULADO = 'u_ahorrov2_acumulado';
-        const KEY_META = 'u_ahorrov2_meta';
-        const KEY_HISTORIAL = 'u_ahorrov2_historial';
+        const KEY_NOMBRE = 'u_ahorrov3_nombre';
+        const KEY_ACUMULADO = 'u_ahorrov3_acumulado';
+        const KEY_META = 'u_ahorrov3_meta';
+        const KEY_HISTORIAL = 'u_ahorrov3_historial';
 
+        let nombreUsuario = localStorage.getItem(KEY_NOMBRE) || '';
         let acumulado = parseFloat(localStorage.getItem(KEY_ACUMULADO)) || 0.00;
         let meta = parseFloat(localStorage.getItem(KEY_META)) || 0.00;
         let historial = JSON.parse(localStorage.getItem(KEY_HISTORIAL)) || [];
 
-        // Los estados de Garrita según el avance del partido financiero
-        const estadosGarrita = [
-            { limite: 0, emoji: "🦁", frase: "¡Y dale U! Ponle garra y fija una meta para empezar a ganar hoy." },
-            { limite: 1, emoji: "👟", frase: "¡Arrancó el partido! Primeros soles guardados. ¡A defender la ventaja!" },
-            { limite: 40, emoji: "🔥", frase: "¡Eso es Garra Crema! Metiendo presión en la cancha, ya se siente el avance." },
-            { limite: 75, emoji: "🥁", frase: "¡La tribuna explota! Estamos a nada de asegurar el triunfo diario. ¡No bajes el ritmo!" },
-            { limite: 100, emoji: "🏆", frase: "¡Finaaaal del partido! ¡Meta cumplida, somos campeones! ¡Y dale U toda la vida! 🎉" }
-        ];
+        // DOM Elementos de la pantalla de bienvenida
+        const pantallaRegistro = document.getElementById('pantalla-registro');
+        const nombreUsuarioInput = document.getElementById('nombre-usuario-input');
+        const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
+        const txtSaludo = document.getElementById('txt-saludo');
 
+        // Elementos del dashboard
         const metaInput = document.getElementById('meta-input');
         const btnFijarMeta = document.getElementById('btn-fijar-meta');
         const montoSubir = document.getElementById('monto-subir');
@@ -187,6 +211,29 @@
         const mascotaEmoji = document.getElementById('mascota-emoji');
         const txtFrase = document.getElementById('txt-frase');
         const historialLista = document.getElementById('historial-lista');
+
+        // Verificar si el usuario ya se registró antes
+        function verificarRegistro() {
+            if (!nombreUsuario) {
+                pantallaRegistro.classList.remove('hidden');
+            } else {
+                pantallaRegistro.classList.add('hidden');
+                txtSaludo.textContent = `Marcador de ${nombreUsuario}`;
+                actualizarInterfaz();
+            }
+        }
+
+        // Guardar nombre inicial
+        btnGuardarNombre.addEventListener('click', () => {
+            const nombre = nombreUsuarioInput.value.trim();
+            if (!nombre) {
+                alert("Por favor, ingresa tu nombre o un apodo de cancha.");
+                return;
+            }
+            nombreUsuario = nombre;
+            localStorage.setItem(KEY_NOMBRE, nombreUsuario);
+            verificarRegistro();
+        });
 
         function actualizarInterfaz() {
             localStorage.setItem(KEY_ACUMULADO, acumulado.toString());
@@ -208,20 +255,27 @@
             txtPorcentaje.textContent = `${Math.round(porcentaje)}% Garra`;
             txtRestante.textContent = restante > 0 ? `Faltan S/ ${restante.toFixed(2)}` : '¡Ganamos! 🌟';
 
-            // Actualización Dinámica del estado de la Mascota
+            // Frases interactivas usando el nombre del usuario
+            const estadosGarrita = [
+                { limite: 0, emoji: "🦁", frase: `¡Y dale U! Ponle garra ${nombreUsuario}, fija una meta para arrancar.` },
+                { limite: 1, emoji: "👟", frase: `¡Arrancó el partido, ${nombreUsuario}! Primeros soles asegurados.` },
+                { limite: 40, emoji: "🔥", frase: `¡Garra crema pura, ${nombreUsuario}! Metiendo presión en la cancha.` },
+                { limite: 75, emoji: "🥁", frase: `¡La tribuna explota, ${nombreUsuario}! Falta el último aliento diario.` },
+                { limite: 100, emoji: "🏆", frase: `¡Finaaaal, ganaste ${nombreUsuario}! ¡Meta cumplida, somos campeones! 🎉` }
+            ];
+
             let estadoActual = estadosGarrita[0];
             for (let i = 0; i < estadosGarrita.length; i++) {
                 if (porcentaje >= estadosGarrita[i].limite) {
                     estadoActual = estadosGarrita[i];
                 }
             }
-            // Si la meta está en cero, forzar estado inicial
             if (meta === 0) estadoActual = estadosGarrita[0];
 
             mascotaEmoji.textContent = estadoActual.emoji;
             txtFrase.textContent = estadoActual.frase;
 
-            // Renderizado del historial detallado
+            // Renderizado del historial
             historialLista.innerHTML = '';
             if (historial.length === 0) {
                 historialLista.innerHTML = `<p class="text-gray-400 text-center py-2 italic text-[11px]">Marcador en 0. Agrega tu primer ahorro.</p>`;
@@ -244,7 +298,7 @@
         btnFijarMeta.addEventListener('click', () => {
             const valorMeta = parseFloat(metaInput.value);
             if (isNaN(valorMeta) || valorMeta <= 0) {
-                alert("Por favor, ingresa una meta válida para el partido de hoy.");
+                alert("Ingresa una meta válida.");
                 return;
             }
             meta = valorMeta;
@@ -257,45 +311,38 @@
             let razon = descripcionSubir.value.trim();
 
             if (isNaN(valorMonto) || valorMonto <= 0) {
-                alert("Por favor, ingresa un monto válido a subir.");
+                alert("Ingresa un monto válido.");
                 return;
             }
 
-            // Si no introduce descripción, asignamos una por defecto
-            if (!razon) {
-                razon = "Ahorro Garra Crema";
-            }
+            if (!razon) razon = "Ahorro Garra Crema";
 
             acumulado += valorMonto;
-
             const ahora = new Date();
             const horaFormateada = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
             
-            // Guardar con su respectiva descripción
-            historial.unshift({ 
-                hora: horaFormateada, 
-                monto: valorMonto, 
-                descripcion: razon 
-            });
+            historial.unshift({ hora: horaFormateada, monto: valorMonto, descripcion: razon });
 
             montoSubir.value = '';
             descripcionSubir.value = '';
             actualizarInterfaz();
         });
 
+        // Borrar todo resetea el nombre también
         btnLimpiarTodo.addEventListener('click', () => {
-            if (confirm("¿Seguro de reiniciar todo el marcador y empezar el partido desde cero?")) {
-                localStorage.removeItem(KEY_ACUMULADO);
-                localStorage.removeItem(KEY_META);
-                localStorage.removeItem(KEY_HISTORIAL);
+            if (confirm("¿Quieres reiniciar el marcador y cambiar de nombre de jugador?")) {
+                localStorage.clear();
+                nombreUsuario = '';
                 acumulado = 0.00;
                 meta = 0.00;
                 historial = [];
-                actualizarInterfaz();
+                nombreUsuarioInput.value = '';
+                verificarRegistro();
             }
         });
 
-        actualizarInterfaz();
+        // Ejecutar al iniciar
+        verificarRegistro();
     </script>
 </body>
 </html>
