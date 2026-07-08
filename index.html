@@ -3,152 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garra Ahorro - Universitario</title>
+    <title>Garra Ahorro v2 - Universitario</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Iconos e identidad -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Tipografía con fuerza para los marcadores */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&display=swap');
+        .font-tribuna { font-family: 'Montserrat', sans-serif; }
+    </style>
 </head>
-<!-- Fondo crema claro texturizado de fondo -->
-<body class="min-h-screen bg-[#F7F4EB] py-8 px-4 font-sans text-[#2A2A2A]">
+<body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A]">
 
-    <div class="max-w-md mx-auto bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-6 space-y-6 relative overflow-hidden">
+    <div class="max-w-md mx-auto bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-5 relative overflow-hidden">
         
-        <!-- Detalle decorativo granate superior -->
+        <!-- Franja Granate Institucional -->
         <div class="absolute top-0 left-0 right-0 h-3 bg-[#7A1C2E]"></div>
 
-        <!-- Encabezado con Identidad Merengue -->
+        <!-- Encabezado Principal -->
         <header class="flex items-center justify-between pt-2">
             <div class="flex items-center space-x-3">
-                <!-- Contenedor para la insignia/escudo -->
-                <div class="w-12 h-12 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-xl border-2 border-[#D4AF37] shadow-md">
+                <div class="w-11 h-11 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-xl border-2 border-[#D4AF37] shadow-sm font-tribuna">
                     U
                 </div>
                 <div>
-                    <h1 class="text-xl font-black uppercase tracking-tight text-[#7A1C2E]">Garra Ahorro</h1>
-                    <p class="text-xs text-gray-500 font-medium">El dinero no se gasta, se cuida</p>
+                    <h1 class="text-lg font-black uppercase tracking-tight text-[#7A1C2E] font-tribuna">Garra Ahorro</h1>
+                    <p class="text-[11px] text-gray-500 font-bold uppercase tracking-wider">Marcador de finanzas personales</p>
                 </div>
             </div>
-            <!-- Mascota / Icono de aliento -->
-            <div class="text-3xl text-[#D4AF37] animate-pulse">
-                <i class="fas fa-trophy"></i>
+            <div class="text-2xl text-[#D4AF37]">
+                <i class="fas fa-star animate-spin" style="animation-duration: 4s;"></i>
             </div>
         </header>
 
-        <!-- Frase Motivacional Dinámica (Garra Crema) -->
-        <div class="bg-[#7A1C2E] text-[#F7F4EB] p-3 rounded-xl text-center text-xs font-bold tracking-wide uppercase shadow-sm">
-            <span id="txt-frase">"¡Y dale U toda la vida! Fija tu meta hoy"</span>
+        <!-- Zona de la Mascota "Garrita" Animada y Dinámica -->
+        <div id="contenedor-mascota" class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] flex items-center space-x-4 shadow-md border border-[#4D0F1A]">
+            <!-- Avatar Visual de la Mascota usando Iconos Interactivos -->
+            <div class="w-16 h-16 rounded-full bg-[#FDFBF7] border-2 border-[#D4AF37] flex items-center justify-center text-3xl shadow-inner shrink-0">
+                <span id="mascota-emoji">🦁</span>
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="bg-[#D4AF37] text-[#7A1C2E] text-[10px] font-black uppercase px-2 py-0.5 rounded w-max tracking-wider">
+                    Garrita Dice:
+                </div>
+                <!-- Frase motivacional e identidad merengue -->
+                <p id="txt-frase" class="text-xs font-bold leading-tight italic text-gray-100">
+                    "¡Y dale U toda la vida! Fija tu meta para arrancar el partido hoy."
+                </p>
+            </div>
         </div>
 
-        <!-- Configuración de la Meta Diaria -->
-        <div class="bg-[#F7F4EB] p-4 rounded-2xl border border-[#E6DFCE] space-y-2">
-            <label class="block text-[11px] font-extrabold text-[#7A1C2E] uppercase tracking-wider">Meta del Día (S/)</label>
+        <!-- Ajustar Objetivo Diario -->
+        <div class="bg-[#F7F4EB] p-3.5 rounded-xl border border-[#E6DFCE] space-y-2">
+            <label class="block text-[10px] font-extrabold text-[#7A1C2E] uppercase tracking-wider">Establecer Meta del Día (S/)</label>
             <div class="flex space-x-2">
                 <input 
                     type="number" 
                     id="meta-input" 
-                    placeholder="Ej. 50.00" 
-                    class="flex-1 px-4 py-2.5 bg-white border border-[#E6DFCE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-bold"
+                    placeholder="Ej. 60.00" 
+                    class="flex-1 px-3 py-2 bg-white border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-bold"
                 />
                 <button 
                     id="btn-fijar-meta" 
-                    class="bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-xl transition-colors cursor-pointer shadow-sm"
+                    class="bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] text-[11px] font-black uppercase tracking-wider px-4 rounded-lg transition-colors cursor-pointer shadow-sm font-tribuna"
                 >
                     Fijar Meta
                 </button>
             </div>
         </div>
 
-        <!-- Panel del Estadio / Progreso Monumental -->
-        <div class="bg-white rounded-2xl p-5 border-2 border-[#7A1C2E] shadow-md space-y-4 relative">
+        <!-- Panel del Estadio Monumental / Progreso Visual -->
+        <div class="bg-white rounded-2xl p-4 border-2 border-[#7A1C2E] shadow-sm space-y-3">
             <div class="flex justify-between items-end">
                 <div>
-                    <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Asegurado Hoy</span>
-                    <h2 id="txt-acumulado" class="text-3xl font-black text-[#7A1C2E] mt-0.5">S/ 0.00</h2>
+                    <span class="text-[9px] uppercase tracking-wider text-gray-400 font-extrabold block">Asegurado en Tribuna</span>
+                    <h2 id="txt-acumulado" class="text-2xl font-black text-[#7A1C2E] font-tribuna mt-0.5">S/ 0.00</h2>
                 </div>
                 <div class="text-right">
-                    <span class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Objetivo</span>
-                    <h3 id="txt-meta" class="text-lg font-bold text-[#2A2A2A] mt-0.5">S/ 0.00</h3>
+                    <span class="text-[9px] uppercase tracking-wider text-gray-400 font-extrabold block">Meta Diaria</span>
+                    <h3 id="txt-meta" class="text-base font-bold text-[#2A2A2A] mt-0.5">S/ 0.00</h3>
                 </div>
             </div>
 
-            <!-- Barra de progreso Granate y Oro -->
+            <!-- Barra Granate y Oro -->
             <div class="w-full bg-[#F7F4EB] rounded-full h-4 overflow-hidden border border-[#E6DFCE] p-0.5">
-                <div id="barra-progreso" class="bg-gradient-to-r from-[#7A1C2E] to-[#A62B42] h-full w-0 rounded-full transition-all duration-700 ease-out"></div>
+                <div id="barra-progreso" class="bg-gradient-to-r from-[#7A1C2E] to-[#D4AF37] h-full w-0 rounded-full transition-all duration-700 ease-out"></div>
             </div>
             
-            <div class="flex justify-between text-xs font-bold">
-                <span id="txt-porcentaje" class="text-[#7A1C2E]">0% Garra</span>
-                <span id="txt-restante" class="text-[#D4AF37] font-extrabold">Faltan S/ 0.00</span>
+            <div class="flex justify-between text-[11px] font-bold">
+                <span id="txt-porcentaje" class="text-[#7A1C2E] uppercase tracking-wide">0% Completado</span>
+                <span id="txt-restante" class="text-[#D4AF37] font-black uppercase tracking-wide">Faltan S/ 0.00</span>
             </div>
         </div>
 
-        <!-- Formulario de Inyección de Ahorro -->
-        <div class="space-y-3">
-            <label class="block text-center text-xs font-extrabold text-gray-500 uppercase tracking-wider">¿Cuánto vas a sumar al marcador?</label>
-            <div class="relative">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-xl text-gray-400">S/</span>
-                <input
-                    type="number"
-                    id="monto-subir"
-                    step="0.01"
-                    placeholder="0.00"
-                    class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-[#E6DFCE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] focus:border-[#7A1C2E] text-2xl font-black text-center text-[#7A1C2E]"
-                />
+        <!-- Formulario Inyección de Ahorro con Razón/Descripción -->
+        <div class="bg-white p-4 rounded-xl border border-[#E6DFCE] space-y-3 shadow-inner">
+            <h4 class="text-center text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">Anotar Nuevo Monto Ahorrado</h4>
+            
+            <div class="grid grid-cols-3 gap-2">
+                <!-- Entrada de Monto -->
+                <div class="col-span-1 relative">
+                    <span class="absolute left-2 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-400">S/</span>
+                    <input
+                        type="number"
+                        id="monto-subir"
+                        step="0.01"
+                        placeholder="0.00"
+                        class="w-full pl-6 pr-1 py-2.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-black text-[#7A1C2E]"
+                    />
+                </div>
+                <!-- Entrada de Descripción/Razón -->
+                <div class="col-span-2">
+                    <input
+                        type="text"
+                        id="descripcion-subir"
+                        placeholder="¿Razón? Ej. Cociné en casa"
+                        class="w-full px-3 py-2.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-xs font-medium text-gray-700"
+                    />
+                </div>
             </div>
 
             <button
                 id="btn-ahorrar"
                 type="button"
-                class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-4 rounded-xl transition-all shadow-md active:scale-[0.98] transform tracking-widest uppercase text-sm cursor-pointer border-b-4 border-[#4D0F1A]"
+                class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-3 rounded-lg transition-all shadow-md active:scale-[0.99] transform tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna"
             >
                 💪 ¡Ahorré Hoy!
             </button>
         </div>
 
-        <!-- Historial / Tribuna de Movimientos -->
-        <div class="space-y-2 pt-2 border-t border-[#E6DFCE]">
-            <h4 class="text-[11px] font-black text-gray-400 uppercase tracking-wider flex items-center justify-between">
-                <span>Minuto a Minuto (Hoy)</span>
-                <i class="fas fa-history"></i>
-            </h4>
-            <div id="historial-lista" class="max-h-36 overflow-y-auto space-y-1.5 pr-1 text-xs">
-                <!-- Dinámico -->
+        <!-- Minuto a Minuto con Descripción Integrada -->
+        <div class="space-y-2 pt-1 border-t border-[#E6DFCE]">
+            <h5 class="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center justify-between">
+                <span>Historial en la Tribuna</span>
+                <i class="fas fa-list-ol"></i>
+            </h5>
+            <div id="historial-lista" class="max-h-32 overflow-y-auto space-y-1.5 pr-1 text-xs">
+                <!-- Inyección dinámica -->
             </div>
         </div>
 
-        <!-- Zona de reinicio -->
+        <!-- Botón de Reinicio -->
         <div class="text-center pt-1">
             <button 
                 id="btn-limpiar-todo" 
-                class="text-[10px] text-gray-400 hover:text-[#7A1C2E] font-bold transition-colors uppercase tracking-wider cursor-pointer"
+                class="text-[9px] text-gray-400 hover:text-red-600 font-bold transition-colors uppercase tracking-wider cursor-pointer"
             >
-                <i class="fas fa-trash-alt mr-1"></i> Reiniciar marcador a 0
+                <i class="fas fa-undo-alt mr-1"></i> Reiniciar marcador a cero
             </button>
         </div>
 
     </div>
 
     <script>
-        const KEY_ACUMULADO = 'u_ahorro_acumulado';
-        const KEY_META = 'u_ahorro_meta';
-        const KEY_HISTORIAL = 'u_ahorro_historial';
+        const KEY_ACUMULADO = 'u_ahorrov2_acumulado';
+        const KEY_META = 'u_ahorrov2_meta';
+        const KEY_HISTORIAL = 'u_ahorrov2_historial';
 
         let acumulado = parseFloat(localStorage.getItem(KEY_ACUMULADO)) || 0.00;
         let meta = parseFloat(localStorage.getItem(KEY_META)) || 0.00;
         let historial = JSON.parse(localStorage.getItem(KEY_HISTORIAL)) || [];
 
-        // Frases de aliento de la U según el porcentaje
-        const frasesCrema = {
-            inicio: "¡Y dale U toda la vida! Fija tu meta y ponle garra.",
-            proceso: "A paso firme... ¡Porque a la U la hace grande su gente!",
-            mitad: "¡Vamos merengues! Ya pasamos la mitad del partido de hoy.",
-            casi: "¡Garra Crema pura! Falta el último aliento para ganar.",
-            campeon: "¡Finaaaal del partido! ¡Meta cumplida, somos campeones! 🏆"
-        };
+        // Los estados de Garrita según el avance del partido financiero
+        const estadosGarrita = [
+            { limite: 0, emoji: "🦁", frase: "¡Y dale U! Ponle garra y fija una meta para empezar a ganar hoy." },
+            { limite: 1, emoji: "👟", frase: "¡Arrancó el partido! Primeros soles guardados. ¡A defender la ventaja!" },
+            { limite: 40, emoji: "🔥", frase: "¡Eso es Garra Crema! Metiendo presión en la cancha, ya se siente el avance." },
+            { limite: 75, emoji: "🥁", frase: "¡La tribuna explota! Estamos a nada de asegurar el triunfo diario. ¡No bajes el ritmo!" },
+            { limite: 100, emoji: "🏆", frase: "¡Finaaaal del partido! ¡Meta cumplida, somos campeones! ¡Y dale U toda la vida! 🎉" }
+        ];
 
         const metaInput = document.getElementById('meta-input');
         const btnFijarMeta = document.getElementById('btn-fijar-meta');
         const montoSubir = document.getElementById('monto-subir');
+        const descripcionSubir = document.getElementById('descripcion-subir');
         const btnAhorrar = document.getElementById('btn-ahorrar');
         const btnLimpiarTodo = document.getElementById('btn-limpiar-todo');
 
@@ -157,6 +184,7 @@
         const barraProgreso = document.getElementById('barra-progreso');
         const txtPorcentaje = document.getElementById('txt-porcentaje');
         const txtRestante = document.getElementById('txt-restante');
+        const mascotaEmoji = document.getElementById('mascota-emoji');
         const txtFrase = document.getElementById('txt-frase');
         const historialLista = document.getElementById('historial-lista');
 
@@ -178,31 +206,35 @@
 
             barraProgreso.style.width = `${porcentaje}%`;
             txtPorcentaje.textContent = `${Math.round(porcentaje)}% Garra`;
-            
-            if (restante > 0) {
-                txtRestante.textContent = `Faltan S/ ${restante.toFixed(2)}`;
-            } else {
-                txtRestante.textContent = '¡Meta Cumplida! 🌟';
+            txtRestante.textContent = restante > 0 ? `Faltan S/ ${restante.toFixed(2)}` : '¡Ganamos! 🌟';
+
+            // Actualización Dinámica del estado de la Mascota
+            let estadoActual = estadosGarrita[0];
+            for (let i = 0; i < estadosGarrita.length; i++) {
+                if (porcentaje >= estadosGarrita[i].limite) {
+                    estadoActual = estadosGarrita[i];
+                }
             }
+            // Si la meta está en cero, forzar estado inicial
+            if (meta === 0) estadoActual = estadosGarrita[0];
 
-            // Manejo dinámico de las frases merengues
-            if (meta === 0) txtFrase.textContent = frasesCrema.inicio;
-            else if (porcentaje >= 100) txtFrase.textContent = frasesCrema.campeon;
-            else if (porcentaje >= 80) txtFrase.textContent = frasesCrema.casi;
-            else if (porcentaje >= 50) txtFrase.textContent = frasesCrema.mitad;
-            else txtFrase.textContent = frasesCrema.proceso;
+            mascotaEmoji.textContent = estadoActual.emoji;
+            txtFrase.textContent = estadoActual.frase;
 
-            // Renderizar la tribuna del historial
+            // Renderizado del historial detallado
             historialLista.innerHTML = '';
             if (historial.length === 0) {
-                historialLista.innerHTML = `<p class="text-gray-400 text-center py-2 italic">Marcador en 0. Sin ahorros registrados hoy.</p>`;
+                historialLista.innerHTML = `<p class="text-gray-400 text-center py-2 italic text-[11px]">Marcador en 0. Agrega tu primer ahorro.</p>`;
             } else {
                 historial.forEach(item => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.className = "flex justify-between items-center bg-white px-3 py-2 rounded-xl border border-[#E6DFCE] font-medium";
+                    itemDiv.className = "flex justify-between items-center bg-white px-3 py-2 rounded-xl border border-[#E6DFCE] shadow-sm";
                     itemDiv.innerHTML = `
-                        <span class="text-gray-400 font-mono text-[10px]"><i class="far fa-clock mr-1 text-[#7A1C2E]"></i>${item.hora}</span>
-                        <span class="font-black text-[#7A1C2E]">+ S/ ${parseFloat(item.monto).toFixed(2)}</span>
+                        <div class="space-y-0.5">
+                            <p class="font-bold text-[#2A2A2A] text-xs leading-tight">${item.descripcion}</p>
+                            <span class="text-gray-400 font-mono text-[9px] block"><i class="far fa-clock mr-1 text-[#7A1C2E]"></i>${item.hora}</span>
+                        </div>
+                        <span class="font-black text-[#7A1C2E] text-xs font-tribuna shrink-0">+ S/ ${parseFloat(item.monto).toFixed(2)}</span>
                     `;
                     historialLista.appendChild(itemDiv);
                 });
@@ -212,7 +244,7 @@
         btnFijarMeta.addEventListener('click', () => {
             const valorMeta = parseFloat(metaInput.value);
             if (isNaN(valorMeta) || valorMeta <= 0) {
-                alert("Ingresa una meta válida.");
+                alert("Por favor, ingresa una meta válida para el partido de hoy.");
                 return;
             }
             meta = valorMeta;
@@ -222,23 +254,37 @@
 
         btnAhorrar.addEventListener('click', () => {
             const valorMonto = parseFloat(montoSubir.value);
+            let razon = descripcionSubir.value.trim();
+
             if (isNaN(valorMonto) || valorMonto <= 0) {
-                alert("Ingresa un monto válido para sumar.");
+                alert("Por favor, ingresa un monto válido a subir.");
                 return;
+            }
+
+            // Si no introduce descripción, asignamos una por defecto
+            if (!razon) {
+                razon = "Ahorro Garra Crema";
             }
 
             acumulado += valorMonto;
 
             const ahora = new Date();
             const horaFormateada = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
-            historial.unshift({ hora: horaFormateada, monto: valorMonto });
+            
+            // Guardar con su respectiva descripción
+            historial.unshift({ 
+                hora: horaFormateada, 
+                monto: valorMonto, 
+                descripcion: razon 
+            });
 
             montoSubir.value = '';
+            descripcionSubir.value = '';
             actualizarInterfaz();
         });
 
         btnLimpiarTodo.addEventListener('click', () => {
-            if (confirm("¿Reiniciar el marcador y empezar el partido desde 0?")) {
+            if (confirm("¿Seguro de reiniciar todo el marcador y empezar el partido desde cero?")) {
                 localStorage.removeItem(KEY_ACUMULADO);
                 localStorage.removeItem(KEY_META);
                 localStorage.removeItem(KEY_HISTORIAL);
