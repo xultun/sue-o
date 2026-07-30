@@ -4,18 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garra Ahorro Personalizado - Universitario</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tailwind CSS v3/v4 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&display=swap');
         .font-tribuna { font-family: 'Montserrat', sans-serif; }
+        
+        /* Personalización de la barra de desplazamiento del historial */
+        #historial-lista::-webkit-scrollbar {
+            width: 5px;
+        }
+        #historial-lista::-webkit-scrollbar-track {
+            background: #F7F4EB;
+            border-radius: 10px;
+        }
+        #historial-lista::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 10px;
+        }
     </style>
 </head>
-<body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A] relative">
+<body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A] relative flex items-center justify-center">
 
-    <!-- PANTALLA DE REGISTRO INICIAL (Se muestra solo la primera vez) -->
-    <div id="pantalla-registro" class="hidden fixed inset-0 bg-[#7A1C2E] z-50 flex items-center justify-center p-4">
-        <div class="bg-[#FDFBF7] rounded-3xl p-6 max-w-sm w-full border-2 border-[#D4AF37] text-center space-y-5 shadow-2xl">
+    <!-- PANTALLA DE REGISTRO INICIAL -->
+    <div id="pantalla-registro" class="hidden fixed inset-0 bg-[#7A1C2E]/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#FDFBF7] rounded-3xl p-6 max-w-sm w-full border-2 border-[#D4AF37] text-center space-y-5 shadow-2xl transform transition-all">
             <div class="w-16 h-16 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-2xl border-2 border-[#D4AF37] shadow-md font-tribuna mx-auto">
                 U
             </div>
@@ -23,49 +37,50 @@
                 <h2 class="text-xl font-black text-[#7A1C2E] uppercase font-tribuna">¡Bienvenido Merengue!</h2>
                 <p class="text-xs text-gray-500 font-medium">Registra tu nombre para empezar a controlar tus finanzas con Garra.</p>
             </div>
-            <div class="space-y-3">
+            <form id="form-registro" class="space-y-3" onsubmit="event.preventDefault();">
                 <input 
                     type="text" 
                     id="nombre-usuario-input" 
                     placeholder="Tu nombre o apodo" 
+                    autocomplete="off"
                     class="w-full px-4 py-3 bg-[#F7F4EB] border border-[#E6DFCE] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] font-bold text-center text-sm"
                 />
                 <button 
                     id="btn-guardar-nombre"
-                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-3 rounded-xl uppercase text-xs tracking-wider font-tribuna cursor-pointer shadow-md border-b-4 border-[#4D0F1A]"
+                    type="button"
+                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-95 text-[#F7F4EB] font-black py-3 rounded-xl uppercase text-xs tracking-wider font-tribuna cursor-pointer shadow-md border-b-4 border-[#4D0F1A] transition-all"
                 >
                     Saltar a la Cancha 👟
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL (Aplicación) -->
-    <div class="max-w-md mx-auto bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-5 relative overflow-hidden">
+    <!-- DASHBOARD PRINCIPAL -->
+    <div class="max-w-md w-full bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-5 relative overflow-hidden">
         
-        <!-- Franja Granate -->
+        <!-- Franja Granate Top -->
         <div class="absolute top-0 left-0 right-0 h-3 bg-[#7A1C2E]"></div>
 
         <!-- Encabezado Principal -->
         <header class="flex items-center justify-between pt-2">
             <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-xl border-2 border-[#D4AF37] shadow-sm font-tribuna">
+                <div class="w-11 h-11 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-xl border-2 border-[#D4AF37] shadow-sm font-tribuna shrink-0">
                     U
                 </div>
                 <div>
-                    <!-- El nombre aparecerá aquí dinámicamente -->
                     <h1 class="text-lg font-black uppercase tracking-tight text-[#7A1C2E] font-tribuna">Garra Ahorro</h1>
                     <p id="txt-saludo" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Marcador de Ahorro</p>
                 </div>
             </div>
             <div class="text-2xl text-[#D4AF37]">
-                <i class="fas fa-star animate-spin" style="animation-duration: 4s;"></i>
+                <i class="fas fa-star animate-spin" style="animation-duration: 6s;"></i>
             </div>
         </header>
 
-        <!-- Zona de la Mascota "Garrita" Animada -->
+        <!-- Zona de la Mascota "Garrita" -->
         <div class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] flex items-center space-x-4 shadow-md border border-[#4D0F1A]">
-            <div class="w-16 h-16 rounded-full bg-[#FDFBF7] border-2 border-[#D4AF37] flex items-center justify-center text-3xl shadow-inner shrink-0">
+            <div class="w-14 h-14 rounded-full bg-[#FDFBF7] border-2 border-[#D4AF37] flex items-center justify-center text-3xl shadow-inner shrink-0">
                 <span id="mascota-emoji">🦁</span>
             </div>
             <div class="flex-1 space-y-1">
@@ -85,11 +100,13 @@
                 <input 
                     type="number" 
                     id="meta-input" 
+                    step="0.50"
                     placeholder="Ej. 60.00" 
                     class="flex-1 px-3 py-2 bg-white border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-bold"
                 />
                 <button 
                     id="btn-fijar-meta" 
+                    type="button"
                     class="bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] text-[11px] font-black uppercase tracking-wider px-4 rounded-lg transition-colors cursor-pointer shadow-sm font-tribuna"
                 >
                     Fijar Meta
@@ -112,11 +129,11 @@
 
             <!-- Barra Granate y Oro -->
             <div class="w-full bg-[#F7F4EB] rounded-full h-4 overflow-hidden border border-[#E6DFCE] p-0.5">
-                <div id="barra-progreso" class="bg-gradient-to-r from-[#7A1C2E] to-[#D4AF37] h-full w-0 rounded-full transition-all duration-700 ease-out"></div>
+                <div id="barra-progreso" class="bg-gradient-to-r from-[#7A1C2E] to-[#D4AF37] h-full w-0 rounded-full transition-all duration-500 ease-out"></div>
             </div>
             
             <div class="flex justify-between text-[11px] font-bold">
-                <span id="txt-porcentaje" class="text-[#7A1C2E] uppercase tracking-wide">0% Completado</span>
+                <span id="txt-porcentaje" class="text-[#7A1C2E] uppercase tracking-wide">0% Garra</span>
                 <span id="txt-restante" class="text-[#D4AF37] font-black uppercase tracking-wide">Faltan S/ 0.00</span>
             </div>
         </div>
@@ -127,13 +144,13 @@
             
             <div class="grid grid-cols-3 gap-2">
                 <div class="col-span-1 relative">
-                    <span class="absolute left-2 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-400">S/</span>
+                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 font-bold text-xs text-gray-400">S/</span>
                     <input
                         type="number"
                         id="monto-subir"
-                        step="0.01"
+                        step="0.10"
                         placeholder="0.00"
-                        class="w-full pl-6 pr-1 py-2.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-black text-[#7A1C2E]"
+                        class="w-full pl-7 pr-1 py-2.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-sm font-black text-[#7A1C2E]"
                     />
                 </div>
                 <div class="col-span-2">
@@ -149,7 +166,7 @@
             <button
                 id="btn-ahorrar"
                 type="button"
-                class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-3 rounded-lg transition-all shadow-md active:scale-[0.99] transform tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna"
+                class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-[0.98] text-[#F7F4EB] font-black py-3 rounded-lg transition-all shadow-md tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna"
             >
                 💪 ¡Ahorré Hoy!
             </button>
@@ -161,7 +178,7 @@
                 <span>Historial en la Tribuna</span>
                 <i class="fas fa-list-ol"></i>
             </h5>
-            <div id="historial-lista" class="max-h-32 overflow-y-auto space-y-1.5 pr-1 text-xs">
+            <div id="historial-lista" class="max-h-36 overflow-y-auto space-y-1.5 pr-1 text-xs">
                 <!-- Inyección dinámica -->
             </div>
         </div>
@@ -170,6 +187,7 @@
         <div class="text-center pt-1">
             <button 
                 id="btn-limpiar-todo" 
+                type="button"
                 class="text-[9px] text-gray-400 hover:text-red-600 font-bold transition-colors uppercase tracking-wider cursor-pointer"
             >
                 <i class="fas fa-undo-alt mr-1"></i> Borrar Todo y cambiar de jugador
@@ -212,7 +230,6 @@
         const txtFrase = document.getElementById('txt-frase');
         const historialLista = document.getElementById('historial-lista');
 
-        // Verificar si el usuario ya se registró antes
         function verificarRegistro() {
             if (!nombreUsuario) {
                 pantallaRegistro.classList.remove('hidden');
@@ -223,7 +240,6 @@
             }
         }
 
-        // Guardar nombre inicial
         btnGuardarNombre.addEventListener('click', () => {
             const nombre = nombreUsuarioInput.value.trim();
             if (!nombre) {
@@ -255,7 +271,7 @@
             txtPorcentaje.textContent = `${Math.round(porcentaje)}% Garra`;
             txtRestante.textContent = restante > 0 ? `Faltan S/ ${restante.toFixed(2)}` : '¡Ganamos! 🌟';
 
-            // Frases interactivas usando el nombre del usuario
+            // Estados e interacciones con Garrita
             const estadosGarrita = [
                 { limite: 0, emoji: "🦁", frase: `¡Y dale U! Ponle garra ${nombreUsuario}, fija una meta para arrancar.` },
                 { limite: 1, emoji: "👟", frase: `¡Arrancó el partido, ${nombreUsuario}! Primeros soles asegurados.` },
@@ -265,12 +281,13 @@
             ];
 
             let estadoActual = estadosGarrita[0];
-            for (let i = 0; i < estadosGarrita.length; i++) {
-                if (porcentaje >= estadosGarrita[i].limite) {
-                    estadoActual = estadosGarrita[i];
+            if (meta > 0) {
+                for (let i = 0; i < estadosGarrita.length; i++) {
+                    if (porcentaje >= estadosGarrita[i].limite) {
+                        estadoActual = estadosGarrita[i];
+                    }
                 }
             }
-            if (meta === 0) estadoActual = estadosGarrita[0];
 
             mascotaEmoji.textContent = estadoActual.emoji;
             txtFrase.textContent = estadoActual.frase;
@@ -278,11 +295,11 @@
             // Renderizado del historial
             historialLista.innerHTML = '';
             if (historial.length === 0) {
-                historialLista.innerHTML = `<p class="text-gray-400 text-center py-2 italic text-[11px]">Marcador en 0. Agrega tu primer ahorro.</p>`;
+                historialLista.innerHTML = `<p class="text-gray-400 text-center py-4 italic text-[11px]">Marcador en 0. Agrega tu primer ahorro.</p>`;
             } else {
                 historial.forEach(item => {
                     const itemDiv = document.createElement('div');
-                    itemDiv.className = "flex justify-between items-center bg-white px-3 py-2 rounded-xl border border-[#E6DFCE] shadow-sm";
+                    itemDiv.className = "flex justify-between items-center bg-white px-3 py-2 rounded-xl border border-[#E6DFCE] shadow-sm hover:border-[#D4AF37] transition-all";
                     itemDiv.innerHTML = `
                         <div class="space-y-0.5">
                             <p class="font-bold text-[#2A2A2A] text-xs leading-tight">${item.descripcion}</p>
@@ -311,7 +328,7 @@
             let razon = descripcionSubir.value.trim();
 
             if (isNaN(valorMonto) || valorMonto <= 0) {
-                alert("Ingresa un monto válido.");
+                alert("Ingresa un monto válido para guardar.");
                 return;
             }
 
@@ -328,7 +345,6 @@
             actualizarInterfaz();
         });
 
-        // Borrar todo resetea el nombre también
         btnLimpiarTodo.addEventListener('click', () => {
             if (confirm("¿Quieres reiniciar el marcador y cambiar de nombre de jugador?")) {
                 localStorage.clear();
@@ -341,7 +357,7 @@
             }
         });
 
-        // Ejecutar al iniciar
+        // Inicializar al cargar
         verificarRegistro();
     </script>
 </body>
