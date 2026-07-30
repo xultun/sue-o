@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garra Ahorro Personalizado - Universitario</title>
-    <!-- Tailwind CSS v3/v4 Play CDN -->
+    <!-- Tailwind CSS v3 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&display=swap');
         .font-tribuna { font-family: 'Montserrat', sans-serif; }
         
-        /* Personalización de la barra de desplazamiento del historial */
+        /* Personalización de scrollbar del historial */
         #historial-lista::-webkit-scrollbar {
             width: 5px;
         }
@@ -29,7 +29,7 @@
 
     <!-- PANTALLA DE REGISTRO INICIAL -->
     <div id="pantalla-registro" class="hidden fixed inset-0 bg-[#7A1C2E]/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-[#FDFBF7] rounded-3xl p-6 max-w-sm w-full border-2 border-[#D4AF37] text-center space-y-5 shadow-2xl transform transition-all">
+        <div class="bg-[#FDFBF7] rounded-3xl p-6 max-w-sm w-full border-2 border-[#D4AF37] text-center space-y-5 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-[#7A1C2E] flex items-center justify-center text-[#F7F4EB] font-black text-2xl border-2 border-[#D4AF37] shadow-md font-tribuna mx-auto">
                 U
             </div>
@@ -48,7 +48,7 @@
                 <button 
                     id="btn-guardar-nombre"
                     type="button"
-                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-95 text-[#F7F4EB] font-black py-3 rounded-xl uppercase text-xs tracking-wider font-tribuna cursor-pointer shadow-md border-b-4 border-[#4D0F1A] transition-all"
+                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-3 rounded-xl uppercase text-xs tracking-wider font-tribuna cursor-pointer shadow-md border-b-4 border-[#4D0F1A] active:scale-95 transition-all"
                 >
                     Saltar a la Cancha 👟
                 </button>
@@ -166,9 +166,10 @@
             <button
                 id="btn-ahorrar"
                 type="button"
-                class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-[0.98] text-[#F7F4EB] font-black py-3 rounded-lg transition-all shadow-md tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna"
+                class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-[0.98] text-[#F7F4EB] font-black py-3 rounded-lg transition-all shadow-md tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna flex items-center justify-center space-x-2"
             >
-                💪 ¡Ahorré Hoy!
+                <span>💪 ¡Ahorré Hoy!</span>
+                <i id="icono-loading" class="fas fa-spinner fa-spin hidden"></i>
             </button>
         </div>
 
@@ -197,6 +198,10 @@
     </div>
 
     <script>
+        // CONFIGURACIÓN GOOGLE SHEETS
+        const SCRIPT_URL = "REEMPLAZA_CON_TU_URL_DE_APPS_SCRIPT";
+
+        // Keys de LocalStorage
         const KEY_NOMBRE = 'u_ahorrov3_nombre';
         const KEY_ACUMULADO = 'u_ahorrov3_acumulado';
         const KEY_META = 'u_ahorrov3_meta';
@@ -207,18 +212,18 @@
         let meta = parseFloat(localStorage.getItem(KEY_META)) || 0.00;
         let historial = JSON.parse(localStorage.getItem(KEY_HISTORIAL)) || [];
 
-        // DOM Elementos de la pantalla de bienvenida
+        // Elementos DOM
         const pantallaRegistro = document.getElementById('pantalla-registro');
         const nombreUsuarioInput = document.getElementById('nombre-usuario-input');
         const btnGuardarNombre = document.getElementById('btn-guardar-nombre');
         const txtSaludo = document.getElementById('txt-saludo');
 
-        // Elementos del dashboard
         const metaInput = document.getElementById('meta-input');
         const btnFijarMeta = document.getElementById('btn-fijar-meta');
         const montoSubir = document.getElementById('monto-subir');
         const descripcionSubir = document.getElementById('descripcion-subir');
         const btnAhorrar = document.getElementById('btn-ahorrar');
+        const iconoLoading = document.getElementById('icono-loading');
         const btnLimpiarTodo = document.getElementById('btn-limpiar-todo');
 
         const txtAcumulado = document.getElementById('txt-acumulado');
@@ -271,7 +276,7 @@
             txtPorcentaje.textContent = `${Math.round(porcentaje)}% Garra`;
             txtRestante.textContent = restante > 0 ? `Faltan S/ ${restante.toFixed(2)}` : '¡Ganamos! 🌟';
 
-            // Estados e interacciones con Garrita
+            // Mascota Garrita
             const estadosGarrita = [
                 { limite: 0, emoji: "🦁", frase: `¡Y dale U! Ponle garra ${nombreUsuario}, fija una meta para arrancar.` },
                 { limite: 1, emoji: "👟", frase: `¡Arrancó el partido, ${nombreUsuario}! Primeros soles asegurados.` },
@@ -292,7 +297,7 @@
             mascotaEmoji.textContent = estadoActual.emoji;
             txtFrase.textContent = estadoActual.frase;
 
-            // Renderizado del historial
+            // Historial
             historialLista.innerHTML = '';
             if (historial.length === 0) {
                 historialLista.innerHTML = `<p class="text-gray-400 text-center py-4 italic text-[11px]">Marcador en 0. Agrega tu primer ahorro.</p>`;
@@ -323,7 +328,36 @@
             actualizarInterfaz();
         });
 
-        btnAhorrar.addEventListener('click', () => {
+        // Sincronización en segundo plano hacia Google Sheets
+        async function enviarAGoogleSheets(monto, descripcion) {
+            if (!SCRIPT_URL || SCRIPT_URL.includes("REEMPLAZA_CON_TU_URL")) {
+                console.warn("Falta configurar la URL de Apps Script en SCRIPT_URL.");
+                return;
+            }
+
+            try {
+                iconoLoading.classList.remove('hidden');
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: "add",
+                        usuario: nombreUsuario,
+                        tipo: "Ahorro",
+                        monto: monto,
+                        descripcion: descripcion,
+                        meta: meta
+                    })
+                });
+            } catch (error) {
+                console.error("Error al enviar a Google Sheets:", error);
+            } finally {
+                iconoLoading.classList.add('hidden');
+            }
+        }
+
+        btnAhorrar.addEventListener('click', async () => {
             const valorMonto = parseFloat(montoSubir.value);
             let razon = descripcionSubir.value.trim();
 
@@ -342,11 +376,16 @@
 
             montoSubir.value = '';
             descripcionSubir.value = '';
+            
+            // Actualización instantánea en pantalla
             actualizarInterfaz();
+
+            // Petición remota
+            await enviarAGoogleSheets(valorMonto, razon);
         });
 
         btnLimpiarTodo.addEventListener('click', () => {
-            if (confirm("¿Quieres reiniciar el marcador y cambiar de nombre de jugador?")) {
+            if (confirm("¿Quieres reiniciar el marcador local y cambiar de nombre de jugador?")) {
                 localStorage.clear();
                 nombreUsuario = '';
                 acumulado = 0.00;
