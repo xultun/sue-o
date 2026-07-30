@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garra Control - Planificador de Gastos por Fecha</title>
+    <title>Garra Control - Flujo en Cascada por Fechas</title>
     <!-- Tailwind CSS v3 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,7 +27,7 @@
 <body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A] flex items-center justify-center">
 
     <!-- DASHBOARD PRINCIPAL -->
-    <div class="max-w-md w-full bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-5 relative overflow-hidden">
+    <div class="max-w-md w-full bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-4 relative overflow-hidden">
         
         <!-- Franja Granate Top -->
         <div class="absolute top-0 left-0 right-0 h-3 bg-[#7A1C2E]"></div>
@@ -40,38 +40,80 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-black uppercase tracking-tight text-[#7A1C2E] font-tribuna">Garra Control</h1>
-                    <p id="txt-saludo" class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Planificador de Gastos por Fecha</p>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Control de Gastos y Cobertura</p>
                 </div>
             </div>
             <div class="text-2xl text-[#D4AF37]">
-                <i class="fas fa-calendar-check"></i>
+                <i class="fas fa-bullseye"></i>
             </div>
         </header>
 
-        <!-- Resumen de Requerimiento Total -->
-        <div class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] shadow-md border border-[#4D0F1A] space-y-2">
+        <!-- TOTAL GENERAL Y FONDO ACUMULADO -->
+        <div class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] shadow-md border border-[#4D0F1A] space-y-3">
             <div class="flex justify-between items-center border-b border-[#D4AF37]/30 pb-2">
-                <span class="text-xs uppercase tracking-wider font-extrabold text-[#D4AF37]">Total Requerido en Agenda</span>
-                <span id="total-requerido" class="text-xl font-black font-tribuna text-white">S/ 0.00</span>
+                <div>
+                    <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#D4AF37] block">Presupuesto Total Agendado</span>
+                    <span id="total-requerido" class="text-xl font-black font-tribuna text-white">S/ 0.00</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#D4AF37] block">Ahorro Disponible</span>
+                    <span id="total-ahorrado" class="text-xl font-black font-tribuna text-green-400">S/ 0.00</span>
+                </div>
             </div>
-            <div class="flex justify-between items-center pt-1 text-xs">
-                <span class="text-gray-200">Garrita dice:</span>
-                <span id="mascota-mensaje" class="font-bold text-[#D4AF37] italic">¡Organiza tus fechas para no quedar en offside! 🦁</span>
+
+            <!-- Objetivo Inmediato -->
+            <div class="bg-[#FDFBF7]/10 p-2.5 rounded-xl border border-[#D4AF37]/30 space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                    <span id="lbl-proximo-objetivo" class="font-bold text-gray-200">Próximo Vencimiento: -</span>
+                    <span id="badge-estado" class="text-[10px] bg-[#D4AF37] text-[#7A1C2E] font-black px-2 py-0.5 rounded uppercase">Sin metas</span>
+                </div>
+                <div class="w-full bg-black/30 rounded-full h-2.5 overflow-hidden p-0.5">
+                    <div id="barra-cobertura" class="bg-gradient-to-r from-yellow-400 to-green-400 h-full w-0 rounded-full transition-all duration-500"></div>
+                </div>
+                <p id="txt-detalle-cobertura" class="text-[11px] font-medium text-gray-200 text-center pt-0.5">
+                    Ingresa ahorros para activar el calendario.
+                </p>
             </div>
         </div>
 
-        <!-- FORMULARIO: Registrar / Programar Gasto por Fecha -->
-        <div class="bg-white p-4 rounded-xl border border-[#E6DFCE] space-y-3 shadow-sm">
+        <!-- MÓDULO: INGRESAR AHORRO DIARIO -->
+        <div class="bg-[#F7F4EB] p-3 rounded-xl border border-[#E6DFCE] space-y-2">
+            <label class="block text-[10px] font-black text-[#7A1C2E] uppercase tracking-wider">💰 Registrar Abono de Dinero a la Bolsa</label>
+            <div class="flex space-x-2">
+                <input 
+                    type="number" 
+                    id="monto-abono" 
+                    step="0.10"
+                    placeholder="Monto S/" 
+                    class="w-1/3 px-3 py-2 bg-white border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-xs font-black text-[#7A1C2E]"
+                />
+                <input 
+                    type="text" 
+                    id="desc-abono" 
+                    placeholder="Ej. Ingreso diario / Saldo" 
+                    class="flex-1 px-3 py-2 bg-white border border-[#E6DFCE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7A1C2E] text-xs font-medium"
+                />
+                <button 
+                    id="btn-abonar" 
+                    type="button"
+                    class="bg-green-700 hover:bg-green-800 text-white text-[10px] font-black uppercase tracking-wider px-3 rounded-lg transition-colors cursor-pointer font-tribuna shadow-sm"
+                >
+                    Abonar
+                </button>
+            </div>
+        </div>
+
+        <!-- FORMULARIO: Programar Gasto -->
+        <div class="bg-white p-3.5 rounded-xl border border-[#E6DFCE] space-y-2.5 shadow-sm">
             <h2 class="text-xs font-extrabold text-[#7A1C2E] uppercase tracking-wider font-tribuna flex items-center justify-between">
                 <span>➕ Programar Nuevo Pago / Gasto</span>
-                <i class="fas fa-[#7A1C2E] fa-plus-circle"></i>
+                <i class="fas fa-plus-circle"></i>
             </h2>
 
-            <form id="form-gasto" class="space-y-2.5" onsubmit="event.preventDefault();">
-                <!-- Categoría -->
+            <form id="form-gasto" class="space-y-2" onsubmit="event.preventDefault();">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Categoría</label>
-                    <select id="categoria" class="w-full px-3 py-2 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
+                    <label class="block text-[9px] font-bold uppercase text-gray-500 mb-0.5">Categoría</label>
+                    <select id="categoria" class="w-full px-2.5 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
                         <option value="🏠 Hogar / Servicios">🏠 Hogar / Servicios</option>
                         <option value="🍔 Alimentación / Gustos">🍔 Alimentación / Gustos</option>
                         <option value="🚌 Transporte">🚌 Transporte</option>
@@ -79,28 +121,26 @@
                     </select>
                 </div>
 
-                <!-- Fecha y Monto -->
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Fecha Límite / Pago</label>
-                        <input type="date" id="fecha-pago" class="w-full px-2.5 py-2 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
+                        <label class="block text-[9px] font-bold uppercase text-gray-500 mb-0.5">Fecha Límite / Pago</label>
+                        <input type="date" id="fecha-pago" class="w-full px-2 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold text-[#2A2A2A] focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Monto Necesario (S/)</label>
-                        <input type="number" id="monto-pago" step="0.10" placeholder="0.00" class="w-full px-2.5 py-2 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-black text-[#7A1C2E] focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
+                        <label class="block text-[9px] font-bold uppercase text-gray-500 mb-0.5">Monto Necesario (S/)</label>
+                        <input type="number" id="monto-pago" step="0.10" placeholder="0.00" class="w-full px-2 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-black text-[#7A1C2E] focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
                     </div>
                 </div>
 
-                <!-- Descripción -->
                 <div>
-                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Descripción / Concepto</label>
-                    <input type="text" id="descripcion-pago" placeholder="Ej. Entrada Monumental, Recibo Luz, etc." class="w-full px-3 py-2 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
+                    <label class="block text-[9px] font-bold uppercase text-gray-500 mb-0.5">Descripción / Concepto</label>
+                    <input type="text" id="descripcion-pago" placeholder="Ej. Entrada Monumental, Recibo Luz, etc." class="w-full px-2.5 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A1C2E]">
                 </div>
 
                 <button 
                     id="btn-agregar" 
                     type="button" 
-                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-[0.98] text-[#F7F4EB] font-black py-2.5 rounded-lg transition-all shadow-md tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna flex items-center justify-center space-x-2"
+                    class="w-full bg-[#7A1C2E] hover:bg-[#611422] active:scale-[0.98] text-[#F7F4EB] font-black py-2 rounded-lg transition-all shadow-md tracking-widest uppercase text-xs cursor-pointer border-b-4 border-[#4D0F1A] font-tribuna flex items-center justify-center space-x-2"
                 >
                     <span>📌 Agendar en Calendario</span>
                     <i id="icono-loading" class="fas fa-spinner fa-spin hidden"></i>
@@ -108,41 +148,54 @@
             </form>
         </div>
 
-        <!-- CRONOGRAMA DE GASTOS POR FECHA -->
+        <!-- CRONOGRAMA DE GASTOS CON ESTADO ACTIVO/INACTIVO -->
         <div class="space-y-2 pt-1 border-t border-[#E6DFCE]">
             <div class="flex justify-between items-center">
                 <h3 class="text-[11px] font-black text-[#7A1C2E] uppercase tracking-wider font-tribuna">
-                    📅 Cronograma de Gastos
+                    📅 Cronograma de Cascada
                 </h3>
-                <span id="cant-items" class="text-[10px] bg-[#D4AF37] text-[#7A1C2E] font-black px-2 py-0.5 rounded-full">0 pendientes</span>
+                <span id="cant-items" class="text-[10px] bg-[#D4AF37] text-[#7A1C2E] font-black px-2 py-0.5 rounded-full">0 items</span>
             </div>
 
-            <div id="lista-gastos" class="max-h-56 overflow-y-auto space-y-2 pr-1">
-                <!-- Inyección dinámica de ítems -->
+            <div id="lista-gastos" class="max-h-52 overflow-y-auto space-y-2 pr-1">
+                <!-- Inyección dinámica -->
             </div>
         </div>
 
-        <!-- Botón de Limpieza -->
         <div class="text-center pt-1">
             <button 
                 id="btn-limpiar" 
                 type="button"
                 class="text-[9px] text-gray-400 hover:text-red-600 font-bold transition-colors uppercase tracking-wider cursor-pointer"
             >
-                <i class="fas fa-trash-alt mr-1"></i> Borrar Todo el Cronograma
+                <i class="fas fa-trash-alt mr-1"></i> Borrar Todo
             </button>
         </div>
 
     </div>
 
     <script>
-        // CONFIGURACIÓN GOOGLE SHEETS (Coloca la URL desplegada de tu Apps Script)
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytjfdB9LCebtQSW3mVVJplSXw2yqls8lM4yWn5u-AzmGRyrK_11P_9UVVrwJscfbcjZA/exec";
+        // CONFIGURACIÓN GOOGLE SHEETS
+        const SCRIPT_URL = "REEMPLAZA_CON_TU_URL_DE_APPS_SCRIPT";
 
-        const KEY_GASTOS = 'garra_gastos_agenda_v1';
+        const KEY_GASTOS = 'garra_gastos_cascada_v2';
+        const KEY_AHORRO = 'garra_ahorro_bolsa_v2';
+
         let agendaGastos = JSON.parse(localStorage.getItem(KEY_GASTOS)) || [];
+        let ahorroDisponible = parseFloat(localStorage.getItem(KEY_AHORRO)) || 0.00;
 
-        // Referencias DOM
+        // Elementos DOM
+        const totalRequeridoEl = document.getElementById('total-requerido');
+        const totalAhorradoEl = document.getElementById('total-ahorrado');
+        const lblProximoObjetivo = document.getElementById('lbl-proximo-objetivo');
+        const badgeEstado = document.getElementById('badge-estado');
+        const barraCobertura = document.getElementById('barra-cobertura');
+        const txtDetalleCobertura = document.getElementById('txt-detalle-cobertura');
+
+        const montoAbonoInput = document.getElementById('monto-abono');
+        const descAbonoInput = document.getElementById('desc-abono');
+        const btnAbonar = document.getElementById('btn-abonar');
+
         const categoriaInput = document.getElementById('categoria');
         const fechaPagoInput = document.getElementById('fecha-pago');
         const montoPagoInput = document.getElementById('monto-pago');
@@ -150,63 +203,150 @@
         const btnAgregar = document.getElementById('btn-agregar');
         const iconoLoading = document.getElementById('icono-loading');
         const listaGastos = document.getElementById('lista-gastos');
-        const totalRequeridoEl = document.getElementById('total-requerido');
         const cantItemsEl = document.getElementById('cant-items');
         const btnLimpiar = document.getElementById('btn-limpiar');
 
-        // Establecer fecha de hoy por defecto en el input
         fechaPagoInput.value = new Date().toISOString().split('T')[0];
 
         function actualizarVista() {
-            // Ordenar gastos cronológicamente por fecha de pago
+            // Ordenar de la fecha más cercana a la más lejana
             agendaGastos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
             localStorage.setItem(KEY_GASTOS, JSON.stringify(agendaGastos));
+            localStorage.setItem(KEY_AHORRO, ahorroDisponible.toString());
+
+            let sumaTotalRequerida = 0;
+            agendaGastos.forEach(g => sumaTotalRequerida += parseFloat(g.monto));
+
+            totalRequeridoEl.textContent = `S/ ${sumaTotalRequerida.toFixed(2)}`;
+            totalAhorradoEl.textContent = `S/ ${ahorroDisponible.toFixed(2)}`;
+            cantItemsEl.textContent = `${agendaGastos.length} compromiso(s)`;
 
             listaGastos.innerHTML = '';
-            let sumaTotal = 0;
 
             if (agendaGastos.length === 0) {
-                listaGastos.innerHTML = `<p class="text-gray-400 text-center py-6 italic text-[11px]">No tienes gastos agendados. ¡Empieza a programar tus fechas!</p>`;
-            } else {
-                agendaGastos.forEach((gasto, index) => {
-                    sumaTotal += parseFloat(gasto.monto);
-
-                    // Formatear fecha legible
-                    const partesFecha = gasto.fecha.split('-');
-                    const fechaFormateada = `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]}`;
-
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-3 rounded-xl border border-[#E6DFCE] shadow-sm flex justify-between items-center hover:border-[#D4AF37] transition-all";
-                    card.innerHTML = `
-                        <div class="space-y-1">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-[10px] font-black bg-[#F7F4EB] text-[#7A1C2E] px-2 py-0.5 rounded border border-[#E6DFCE]">${gasto.categoria}</span>
-                                <span class="text-[10px] font-bold text-gray-500"><i class="far fa-calendar-alt mr-1"></i>${fechaFormateada}</span>
-                            </div>
-                            <p class="font-bold text-[#2A2A2A] text-xs leading-tight">${gasto.descripcion || 'Sin descripción'}</p>
-                        </div>
-                        <div class="text-right flex items-center space-x-2">
-                            <div>
-                                <span class="text-xs font-black text-[#7A1C2E] font-tribuna block">S/ ${parseFloat(gasto.monto).toFixed(2)}</span>
-                            </div>
-                            <button onclick="eliminarGasto(${index})" class="text-gray-300 hover:text-red-500 text-xs p-1">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    `;
-                    listaGastos.appendChild(card);
-                });
-            }
-
-            totalRequeridoEl.textContent = `S/ ${sumaTotal.toFixed(2)}`;
-            cantItemsEl.textContent = `${agendaGastos.length} pendiente(s)`;
-        }
-
-        async function sincronizarGoogleSheets(nuevoGasto) {
-            if (!SCRIPT_URL || SCRIPT_URL.includes("REEMPLAZA_CON_TU_URL")) {
-                console.warn("Falta colocar la URL de Apps Script en SCRIPT_URL");
+                listaGastos.innerHTML = `<p class="text-gray-400 text-center py-6 italic text-[11px]">No hay gastos agendados.</p>`;
+                lblProximoObjetivo.textContent = "Próximo Vencimiento: -";
+                badgeEstado.textContent = "Sin metas";
+                barraCobertura.style.width = "0%";
+                txtDetalleCobertura.textContent = "Agenda compromisos para evaluar la cobertura.";
                 return;
             }
+
+            // LÓGICA EN CASCADA
+            let saldoRestante = ahorroDisponible;
+            let metaActivaEcontrada = false;
+
+            agendaGastos.forEach((gasto, index) => {
+                const montoGasto = parseFloat(gasto.monto);
+                const partesFecha = gasto.fecha.split('-');
+                const fechaFormateada = `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]}`;
+
+                let estadoClase = "";
+                let estadoTexto = "";
+                let badgeHTML = "";
+
+                if (saldoRestante >= montoGasto) {
+                    // Cubierto al 100% por la bolsa
+                    saldoRestante -= montoGasto;
+                    estadoClase = "bg-green-50 border-green-300 opacity-80";
+                    estadoTexto = "CUBIERTO ✅";
+                    badgeHTML = `<span class="text-[9px] font-black bg-green-200 text-green-800 px-1.5 py-0.5 rounded">Cubierto</span>`;
+                } else if (!metaActivaEcontrada) {
+                    // Es el compromiso actual que se está intentando cubrir
+                    metaActivaEcontrada = true;
+                    const faltante = montoGasto - saldoRestante;
+                    const porcentaje = Math.min((saldoRestante / montoGasto) * 100, 100);
+
+                    // Actualizar Card Superior
+                    lblProximoObjetivo.textContent = `Próximo: ${fechaFormateada}`;
+                    badgeEstado.textContent = `EN ENFOQUE 🎯`;
+                    barraCobertura.style.width = `${porcentaje}%`;
+                    txtDetalleCobertura.innerHTML = `Tienes <b>S/ ${saldoRestante.toFixed(2)}</b> de <b>S/ ${montoGasto.toFixed(2)}</b>. <span class="text-yellow-300 font-bold">Faltan S/ ${faltante.toFixed(2)}</span>`;
+
+                    saldoRestante = 0; // Se consumió todo el saldo disponible
+                    estadoClase = "bg-white border-[#D4AF37] ring-2 ring-[#D4AF37]/50 shadow-md";
+                    estadoTexto = `EN PROCESO (Faltan S/ ${faltante.toFixed(2)})`;
+                    badgeHTML = `<span class="text-[9px] font-black bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded animate-pulse">🎯 Meta Activa</span>`;
+                } else {
+                    // Fechas posteriores aún no activas
+                    estadoClase = "bg-gray-100 border-gray-200 opacity-50";
+                    estadoTexto = "EN ESPERA ⏳";
+                    badgeHTML = `<span class="text-[9px] font-bold bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded">Inactivo</span>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border transition-all ${estadoClase} flex justify-between items-center`;
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-1.5">
+                            ${badgeHTML}
+                            <span class="text-[9px] font-bold text-gray-500"><i class="far fa-calendar-alt mr-1"></i>${fechaFormateada}</span>
+                        </div>
+                        <p class="font-bold text-[#2A2A2A] text-xs leading-tight">${gasto.descripcion || gasto.categoria}</p>
+                        <span class="text-[9px] font-extrabold text-gray-400 block tracking-tight">${estadoTexto}</span>
+                    </div>
+                    <div class="text-right flex items-center space-x-2">
+                        <span class="text-xs font-black text-[#7A1C2E] font-tribuna">S/ ${montoGasto.toFixed(2)}</span>
+                        <button onclick="eliminarGasto(${index})" class="text-gray-400 hover:text-red-500 text-xs p-1">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                listaGastos.appendChild(card);
+            });
+
+            // Si todos los gastos fueron cubiertos completamente
+            if (!metaActivaEcontrada && agendaGastos.length > 0) {
+                lblProximoObjetivo.textContent = "¡Todo Cubierto! 🎉";
+                badgeEstado.textContent = "COMPLETO 🌟";
+                barraCobertura.style.width = "100%";
+                txtDetalleCobertura.textContent = `¡Felicidades! Has cubierto los S/ ${sumaTotalRequerida.toFixed(2)} en agenda. Sobrante: S/ ${saldoRestante.toFixed(2)}`;
+            }
+        }
+
+        // Registrar Abono
+        btnAbonar.addEventListener('click', async () => {
+            const monto = parseFloat(montoAbonoInput.value);
+            const desc = descAbonoInput.value.trim() || "Abono diario";
+
+            if (isNaN(monto) || monto <= 0) {
+                alert("Ingresa un monto de abono válido.");
+                return;
+            }
+
+            ahorroDisponible += monto;
+            montoAbonoInput.value = '';
+            descAbonoInput.value = '';
+
+            actualizarVista();
+            await sincronizarGoogleSheets({ tipo: "ABONO", monto: monto, descripcion: desc, fecha: new Date().toISOString().split('T')[0] });
+        });
+
+        // Registrar Compromiso de Gasto
+        btnAgregar.addEventListener('click', async () => {
+            const cat = categoriaInput.value;
+            const fecha = fechaPagoInput.value;
+            const monto = parseFloat(montoPagoInput.value);
+            const desc = descripcionPagoInput.value.trim();
+
+            if (!fecha || isNaN(monto) || monto <= 0) {
+                alert("Ingresa fecha y monto válidos para el compromiso.");
+                return;
+            }
+
+            const nuevoGasto = { categoria: cat, fecha: fecha, monto: monto, descripcion: desc };
+            agendaGastos.push(nuevoGasto);
+
+            montoPagoInput.value = '';
+            descripcionPagoInput.value = '';
+
+            actualizarVista();
+            await sincronizarGoogleSheets({ tipo: "GASTO_PROGRAMADO", ...nuevoGasto });
+        });
+
+        async function sincronizarGoogleSheets(payload) {
+            if (!SCRIPT_URL || SCRIPT_URL.includes("REEMPLAZA_CON_TU_URL")) return;
 
             try {
                 iconoLoading.classList.remove('hidden');
@@ -214,55 +354,14 @@
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: "add",
-                        usuario: "Luis",
-                        categoria: nuevoGasto.categoria,
-                        fechaPago: nuevoGasto.fecha,
-                        monto: nuevoGasto.monto,
-                        descripcion: nuevoGasto.descripcion
-                    })
+                    body: JSON.stringify(payload)
                 });
             } catch (err) {
-                console.error("Error al sincronizar con Sheets:", err);
+                console.error("Error al sincronizar:", err);
             } finally {
                 iconoLoading.classList.add('hidden');
             }
         }
-
-        btnAgregar.addEventListener('click', async () => {
-            const cat = categoriaInput.value;
-            const fecha = fechaPagoInput.value;
-            const monto = parseFloat(montoPagoInput.value);
-            const desc = descripcionPagoInput.value.trim();
-
-            if (!fecha) {
-                alert("Por favor selecciona una fecha límite.");
-                return;
-            }
-
-            if (isNaN(monto) || monto <= 0) {
-                alert("Por favor ingresa un monto válido.");
-                return;
-            }
-
-            const nuevoGasto = {
-                categoria: cat,
-                fecha: fecha,
-                monto: monto,
-                descripcion: desc
-            };
-
-            agendaGastos.push(nuevoGasto);
-            actualizarVista();
-
-            // Limpiar inputs
-            montoPagoInput.value = '';
-            descripcionPagoInput.value = '';
-
-            // Sincronizar en segundo plano con Google Sheets
-            await sincronizarGoogleSheets(nuevoGasto);
-        });
 
         function eliminarGasto(index) {
             agendaGastos.splice(index, 1);
@@ -270,13 +369,13 @@
         }
 
         btnLimpiar.addEventListener('click', () => {
-            if (confirm("¿Deseas borrar toda la agenda de gastos local?")) {
+            if (confirm("¿Limpiar todo el cronograma y saldo acumulado?")) {
                 agendaGastos = [];
+                ahorroDisponible = 0;
                 actualizarVista();
             }
         });
 
-        // Inicializar vista
         actualizarVista();
     </script>
 </body>
