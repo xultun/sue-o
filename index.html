@@ -272,7 +272,9 @@
         function inicializarConfig() {
             if (!configUsuario) {
                 modalConfig.classList.remove('hidden');
+                lblSaludo.textContent = "Sin configurar";
             } else {
+                modalConfig.classList.add('hidden');
                 lblSaludo.textContent = `Hola, ${configUsuario.nombre}`;
                 document.getElementById('cfg-nombre').value = configUsuario.nombre || "";
                 document.getElementById('cfg-correo').value = configUsuario.correo || "";
@@ -281,7 +283,15 @@
             }
         }
 
-        function abrirConfiguracion() { modalConfig.classList.remove('hidden'); }
+        function abrirConfiguracion() { 
+            if (configUsuario) {
+                document.getElementById('cfg-nombre').value = configUsuario.nombre || "";
+                document.getElementById('cfg-correo').value = configUsuario.correo || "";
+                document.getElementById('cfg-dias').value = configUsuario.diasAnticipacion || "1";
+                document.getElementById('cfg-alertas').value = configUsuario.alertasActivas ? "true" : "false";
+            }
+            modalConfig.classList.remove('hidden'); 
+        }
 
         async function guardarConfiguracion() {
             configUsuario = {
@@ -326,7 +336,6 @@
             const faltante = Math.max(0, montoGasto - ahorroDisponible);
             let cuotaNecesaria = faltante / diasRestantes;
 
-            // Mantener base estándar de 50 si la cuota calculada da menos por colchón existente
             const cuotaFinal = Math.max(50, Math.ceil(cuotaNecesaria));
 
             lblCuotaDinamica.textContent = `S/ ${cuotaFinal.toFixed(2)} / día`;
@@ -613,7 +622,7 @@
         });
 
         async function cargarDesdeGoogleSheets() {
-            if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxiXsbHDAU0WlgAe5hzQ9LuHJpzrC2ShKssKj31iHRvDnAx0LFmD8nH748IGBDKMUrkFg/exec")) return;
+            if (!SCRIPT_URL || SCRIPT_URL.includes("TU_URL_DE_APPS_SCRIPT")) return;
 
             try {
                 btnSincronizar.classList.add('fa-spin');
@@ -627,13 +636,13 @@
                 }
             } catch (err) {
                 console.error("Error cargando desde Sheets:", err);
-            } font-medium {
+            } finally {
                 btnSincronizar.classList.remove('fa-spin');
             }
         }
 
         async function enviarAGoogleSheets(payload) {
-            if (!SCRIPT_URL || SCRIPT_URL.includes("TU_URL_DE_APPS_SCRIPT")) return;
+            if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxiXsbHDAU0WlgAe5hzQ9LuHJpzrC2ShKssKj31iHRvDnAx0LFmD8nH748IGBDKMUrkFg/exec")) return;
 
             try {
                 iconoLoading.classList.remove('hidden');
