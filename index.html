@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Garra Control Pro - Sistema de Alertas y Cobertura</title>
+    <title>Garra Control Pro - Cuota Inteligente y Disciplina</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
         .font-tribuna { font-family: 'Montserrat', sans-serif; }
-        #lista-gastos::-webkit-scrollbar, #resumen-categorias::-webkit-scrollbar { width: 5px; height: 5px; }
-        #lista-gastos::-webkit-scrollbar-thumb, #resumen-categorias::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+        #lista-gastos::-webkit-scrollbar, #historial-abonos::-webkit-scrollbar, #resumen-categorias::-webkit-scrollbar { width: 5px; height: 5px; }
+        #lista-gastos::-webkit-scrollbar-thumb, #historial-abonos::-webkit-scrollbar-thumb, #resumen-categorias::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen bg-[#F7F4EB] py-6 px-4 font-sans text-[#2A2A2A] flex items-center justify-center">
 
-    <!-- MODAL DE BIENVENIDA / CONFIGURACIÓN DE ALERTAS -->
+    <!-- MODAL DE CONFIGURACIÓN -->
     <div id="modal-config" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border-2 border-[#D4AF37] space-y-4 relative">
             <div class="text-center space-y-1">
@@ -23,7 +23,7 @@
                     U
                 </div>
                 <h2 class="text-lg font-black text-[#7A1C2E] uppercase font-tribuna">Configurar Alertas</h2>
-                <p class="text-xs text-gray-500 font-medium">Ingresa tus datos para avisarte al celular/correo cuando venzan tus gastos.</p>
+                <p class="text-xs text-gray-500 font-medium">Ingresa tus datos para notificarte si a mediodía no has guardado tu cuota.</p>
             </div>
 
             <form id="form-config" class="space-y-3" onsubmit="event.preventDefault(); guardarConfiguracion();">
@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
+    <!-- CONTAINER PRINCIPAL DE LA APP -->
     <div class="max-w-md w-full bg-[#FDFBF7] rounded-3xl shadow-xl border-2 border-[#E6DFCE] p-5 space-y-4 relative overflow-hidden">
         
         <div class="absolute top-0 left-0 right-0 h-3 bg-[#7A1C2E]"></div>
@@ -89,7 +89,7 @@
             </div>
         </header>
 
-        <!-- PANEL DE TOTALES -->
+        <!-- PANEL DE TOTALES Y PROGRESOS -->
         <div class="bg-gradient-to-br from-[#7A1C2E] to-[#59121F] rounded-2xl p-4 text-[#F7F4EB] shadow-md border border-[#4D0F1A] space-y-3">
             <div class="flex justify-between items-center border-b border-[#D4AF37]/30 pb-2">
                 <div>
@@ -114,6 +114,9 @@
                 <p id="txt-detalle-cobertura" class="text-[10px] font-medium text-gray-200 text-center pt-0.5">
                     Cargando datos...
                 </p>
+                <div id="box-motivacion" class="bg-[#D4AF37]/20 rounded-lg p-1.5 text-center mt-1 border border-[#D4AF37]/40 hidden">
+                    <p id="txt-motivacion" class="text-[10px] font-black text-[#D4AF37] uppercase tracking-wider font-tribuna"></p>
+                </div>
             </div>
         </div>
 
@@ -123,37 +126,80 @@
             <div id="resumen-categorias" class="flex space-x-2 overflow-x-auto pb-1 text-xs"></div>
         </div>
 
-        <!-- ABONAR DINERO -->
-        <div class="bg-[#F7F4EB] p-3 rounded-xl border border-[#E6DFCE] space-y-2">
-            <label class="block text-[10px] font-black text-[#7A1C2E] uppercase tracking-wider">💰 Abonar Dinero a la Bolsa</label>
-            <div class="flex space-x-2">
-                <input type="number" id="monto-abono" step="0.10" placeholder="Monto S/" class="w-1/3 px-3 py-1.5 bg-white border border-[#E6DFCE] rounded-lg text-xs font-black text-[#7A1C2E]" />
-                <input type="text" id="desc-abono" placeholder="Ej. Ingreso diario" class="flex-1 px-3 py-1.5 bg-white border border-[#E6DFCE] rounded-lg text-xs font-medium" />
-                <button id="btn-abonar" type="button" class="bg-green-700 hover:bg-green-800 text-white text-[10px] font-black uppercase px-3 rounded-lg font-tribuna">Abonar</button>
+        <!-- ABONAR DINERO CON CUOTA DINÁMICA RECALCULADA -->
+        <div class="bg-[#F7F4EB] p-3.5 rounded-xl border-2 border-[#D4AF37] space-y-2.5 shadow-sm">
+            <div class="flex justify-between items-center">
+                <div>
+                    <span class="text-[9px] font-extrabold text-gray-500 uppercase block">🛡️ Cuota Inteligente Hoy</span>
+                    <span id="lbl-cuota-dinamica" class="text-sm font-black text-[#7A1C2E] font-tribuna">
+                        S/ 50.00 / día
+                    </span>
+                </div>
+                <span id="badge-cumplimiento" class="text-[9px] font-black bg-red-100 text-red-800 px-2 py-0.5 rounded uppercase">
+                    Pendiente hoy ❌
+                </span>
             </div>
+
+            <!-- Indicador del estado de ahorro -->
+            <div id="msg-ritmo-ahorro" class="text-[10px] bg-amber-50 text-amber-900 p-2 rounded-lg border border-amber-200 font-medium">
+                💡 Calculando cuota ideal...
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <input type="number" id="monto-abono" step="0.10" placeholder="Monto S/" class="w-full px-3 py-1.5 bg-white border border-[#E6DFCE] rounded-lg text-xs font-black text-[#7A1C2E]" />
+                <input type="text" id="desc-abono" placeholder="Ej. Cuota diaria" class="w-full px-3 py-1.5 bg-white border border-[#E6DFCE] rounded-lg text-xs font-medium" />
+            </div>
+
+            <div class="space-y-1">
+                <label class="block text-[9px] font-bold text-gray-600 uppercase">Foto/Captura de prueba de guardado:</label>
+                <input type="file" id="file-comprobante" accept="image/*" class="block w-full text-[10px] text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:font-bold file:bg-[#7A1C2E] file:text-white cursor-pointer"/>
+            </div>
+
+            <button id="btn-abonar" type="button" class="w-full bg-green-700 hover:bg-green-800 text-white text-xs font-black uppercase py-2 rounded-lg font-tribuna transition-colors shadow">
+                🔒 Confirmar y Guardar Abono
+            </button>
+        </div>
+
+        <!-- HISTORIAL DE ABONOS -->
+        <div class="bg-white p-3 rounded-xl border border-[#E6DFCE] space-y-1.5 shadow-sm">
+            <div class="flex justify-between items-center">
+                <h3 class="text-[10px] font-black text-[#7A1C2E] uppercase tracking-wider font-tribuna">📈 Cronograma de Ingresos Diarios</h3>
+                <span id="total-ingresos-acumulado" class="text-[10px] font-black text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">Acumulado: S/ 0.00</span>
+            </div>
+            <div id="historial-abonos" class="max-h-28 overflow-y-auto space-y-1 text-xs"></div>
         </div>
 
         <!-- PROGRAMAR GASTO -->
         <div class="bg-white p-3.5 rounded-xl border border-[#E6DFCE] space-y-2 shadow-sm">
             <h2 class="text-xs font-extrabold text-[#7A1C2E] uppercase tracking-wider font-tribuna flex items-center justify-between">
-                <span>➕ Programar Nuevo Pago</span>
+                <span>➕ Programar Pago (Fecha y Monto)</span>
                 <i class="fas fa-plus-circle"></i>
             </h2>
 
             <form id="form-gasto" class="space-y-2" onsubmit="event.preventDefault();">
-                <select id="categoria" class="w-full px-2.5 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold text-[#2A2A2A]">
-                    <option value="🏠 Hogar / Servicios">🏠 Hogar / Servicios</option>
-                    <option value="🍔 Alimentación / Gustos">🍔 Alimentación / Gustos</option>
-                    <option value="🚌 Transporte">🚌 Transporte</option>
-                    <option value="⚽ Estadio / Camisetas / Hinchada">⚽ Estadio / Camisetas / Hinchada</option>
-                </select>
+                <div>
+                    <input type="text" id="categoria" list="lista-categorias-sugeridas" placeholder="Categoría (Ej. Transporte, Servicios, Estadio...)" class="w-full px-2.5 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold text-[#2A2A2A]">
+                    <datalist id="lista-categorias-sugeridas">
+                        <option value="🏠 Hogar"></option>
+                        <option value="🚌 Transporte"></option>
+                        <option value="⚽ Estadio"></option>
+                        <option value="🍔 Alimentación"></option>
+                        <option value="💳 Servicios"></option>
+                    </datalist>
+                </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <input type="date" id="fecha-pago" class="w-full px-2 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-bold">
                     <input type="number" id="monto-pago" step="0.10" placeholder="Monto S/" class="w-full px-2 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-black text-[#7A1C2E]">
                 </div>
 
-                <input type="text" id="descripcion-pago" placeholder="Descripción (Ej. Recibo Luz)" class="w-full px-2.5 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-medium">
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="descripcion-pago" placeholder="Descripción (Ej. Cuota 1)" class="flex-1 px-2.5 py-1.5 bg-[#F7F4EB] border border-[#E6DFCE] rounded-lg text-xs font-medium">
+                    <label class="flex items-center space-x-1 text-[10px] font-bold text-gray-600 bg-[#F7F4EB] px-2 py-1.5 rounded-lg border border-[#E6DFCE] cursor-pointer">
+                        <input type="checkbox" id="chk-recurrente" class="rounded text-[#7A1C2E]">
+                        <span>Mensual 🔁</span>
+                    </label>
+                </div>
 
                 <button id="btn-agregar" type="button" class="w-full bg-[#7A1C2E] hover:bg-[#611422] text-[#F7F4EB] font-black py-2 rounded-lg tracking-widest uppercase text-xs font-tribuna flex items-center justify-center space-x-2">
                     <span>📌 Agendar Pago</span>
@@ -162,10 +208,10 @@
             </form>
         </div>
 
-        <!-- LISTA CON ALERTAS Y CASCADA -->
+        <!-- LISTA DE GASTOS CON ALERTAS -->
         <div class="space-y-2 pt-1 border-t border-[#E6DFCE]">
             <div class="flex justify-between items-center">
-                <h3 class="text-[11px] font-black text-[#7A1C2E] uppercase tracking-wider font-tribuna">📅 Cronograma y Alertas</h3>
+                <h3 class="text-[11px] font-black text-[#7A1C2E] uppercase tracking-wider font-tribuna">📅 Cronograma de Compromisos</h3>
                 <span id="cant-items" class="text-[10px] bg-[#D4AF37] text-[#7A1C2E] font-black px-2 py-0.5 rounded-full">0 pendientes</span>
             </div>
 
@@ -175,13 +221,15 @@
     </div>
 
     <script>
-        const SCRIPT_URL = "REEMPLAZA_CON_TU_URL_DE_APPS_SCRIPT";
+        const SCRIPT_URL = "TU_URL_DE_APPS_SCRIPT_AQUI";
 
-        const KEY_GASTOS = 'garra_gastos_v4';
-        const KEY_AHORRO = 'garra_ahorro_v4';
-        const KEY_CONFIG = 'garra_config_v4';
+        const KEY_GASTOS = 'garra_gastos_v6';
+        const KEY_AHORRO = 'garra_ahorro_v6';
+        const KEY_HISTORIAL_ABONOS = 'garra_abonos_v6';
+        const KEY_CONFIG = 'garra_config_v6';
 
         let agendaGastos = JSON.parse(localStorage.getItem(KEY_GASTOS)) || [];
+        let historialAbonos = JSON.parse(localStorage.getItem(KEY_HISTORIAL_ABONOS)) || [];
         let ahorroDisponible = parseFloat(localStorage.getItem(KEY_AHORRO)) || 0.00;
         let configUsuario = JSON.parse(localStorage.getItem(KEY_CONFIG)) || null;
 
@@ -194,16 +242,25 @@
         const badgeEstado = document.getElementById('badge-estado');
         const barraCobertura = document.getElementById('barra-cobertura');
         const txtDetalleCobertura = document.getElementById('txt-detalle-cobertura');
+        const boxMotivacion = document.getElementById('box-motivacion');
+        const txtMotivacion = document.getElementById('txt-motivacion');
         const resumenCategoriasEl = document.getElementById('resumen-categorias');
+        const historialAbonosEl = document.getElementById('historial-abonos');
+        const totalIngresosAcumuladoEl = document.getElementById('total-ingresos-acumulado');
+        const badgeCumplimiento = document.getElementById('badge-cumplimiento');
+        const lblCuotaDinamica = document.getElementById('lbl-cuota-dinamica');
+        const msgRitmoAhorro = document.getElementById('msg-ritmo-ahorro');
 
         const montoAbonoInput = document.getElementById('monto-abono');
         const descAbonoInput = document.getElementById('desc-abono');
+        const fileComprobanteInput = document.getElementById('file-comprobante');
         const btnAbonar = document.getElementById('btn-abonar');
 
         const categoriaInput = document.getElementById('categoria');
         const fechaPagoInput = document.getElementById('fecha-pago');
         const montoPagoInput = document.getElementById('monto-pago');
         const descripcionPagoInput = document.getElementById('descripcion-pago');
+        const chkRecurrente = document.getElementById('chk-recurrente');
         const btnAgregar = document.getElementById('btn-agregar');
         const iconoLoading = document.getElementById('icono-loading');
         const listaGastos = document.getElementById('lista-gastos');
@@ -224,15 +281,13 @@
             }
         }
 
-        function abrirConfiguracion() {
-            modalConfig.classList.remove('hidden');
-        }
+        function abrirConfiguracion() { modalConfig.classList.remove('hidden'); }
 
         async function guardarConfiguracion() {
             configUsuario = {
                 nombre: document.getElementById('cfg-nombre').value.trim(),
                 correo: document.getElementById('cfg-correo').value.trim(),
-                diasAnticipacion: document.getElementById('cfg-dias').value,
+                diasAnticipacion: document.getElementById('cfg-dias') ? document.getElementById('cfg-dias').value : "1",
                 alertasActivas: document.getElementById('cfg-alertas').value === "true"
             };
 
@@ -241,6 +296,50 @@
             modalConfig.classList.add('hidden');
 
             await enviarAGoogleSheets({ action: "save_config", ...configUsuario });
+        }
+
+        // ==========================================
+        // LÓGICA DE CUOTA DIARIA DINÁMICA / INTELIGENTE
+        // ==========================================
+        function calcularCuotaDinamica() {
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+
+            const pendientes = agendaGastos.filter(g => g.estado !== "PAGADO");
+            pendientes.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+            if (pendientes.length === 0) {
+                lblCuotaDinamica.textContent = "S/ 0.00 / día";
+                msgRitmoAhorro.className = "text-[10px] bg-green-50 text-green-900 p-2 rounded-lg border border-green-200 font-medium";
+                msgRitmoAhorro.innerHTML = "🎉 ¡Sin pagos pendientes agendados! Tu meta obligatoria de hoy es S/ 0.";
+                return 0;
+            }
+
+            const proximoGasto = pendientes[0];
+            const partes = proximoGasto.fecha.split('-');
+            const fechaLimite = new Date(partes[0], partes[1] - 1, partes[2]);
+
+            const difMilisegundos = fechaLimite - hoy;
+            const diasRestantes = Math.max(1, Math.ceil(difMilisegundos / (1000 * 60 * 60 * 24)));
+            const montoGasto = parseFloat(proximoGasto.monto);
+
+            const faltante = Math.max(0, montoGasto - ahorroDisponible);
+            let cuotaNecesaria = faltante / diasRestantes;
+
+            // Mantener base estándar de 50 si la cuota calculada da menos por colchón existente
+            const cuotaFinal = Math.max(50, Math.ceil(cuotaNecesaria));
+
+            lblCuotaDinamica.textContent = `S/ ${cuotaFinal.toFixed(2)} / día`;
+
+            if (cuotaFinal > 50) {
+                msgRitmoAhorro.className = "text-[10px] bg-red-50 text-red-900 p-2 rounded-lg border border-red-200 font-medium";
+                msgRitmoAhorro.innerHTML = `⚠️ <b>Cuota ajustada a S/ ${cuotaFinal.toFixed(2)}:</b> Para cubrir S/ ${montoGasto.toFixed(2)} al ${partes[2]}/${partes[1]} en los ${diasRestantes} día(s) que quedan.`;
+            } else {
+                msgRitmoAhorro.className = "text-[10px] bg-amber-50 text-amber-900 p-2 rounded-lg border border-amber-200 font-medium";
+                msgRitmoAhorro.innerHTML = `💡 <b>Ritmo Saludable (S/ 50.00/día):</b> Cubres holgadamente tu próximo vencimiento de S/ ${montoGasto.toFixed(2)} al ${partes[2]}/${partes[1]}.`;
+            }
+
+            return cuotaFinal;
         }
 
         function obtenerAlertaTiempo(fechaLimiteStr) {
@@ -264,12 +363,71 @@
             }
         }
 
+        function verificarAbonoHoy() {
+            const hoyStr = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
+            const abonadoHoy = historialAbonos.some(a => a.fecha === hoyStr);
+
+            if (abonadoHoy) {
+                badgeCumplimiento.className = "text-[9px] font-black bg-green-100 text-green-800 px-2 py-0.5 rounded uppercase";
+                badgeCumplimiento.textContent = "Abono de Hoy Listo  ";
+            } else {
+                badgeCumplimiento.className = "text-[9px] font-black bg-red-100 text-red-800 px-2 py-0.5 rounded uppercase";
+                badgeCumplimiento.textContent = "Pendiente hoy ❌";
+            }
+        }
+
+        function renderizarHistorialAbonos() {
+            historialAbonosEl.innerHTML = '';
+            let sumaAcumulada = 0;
+
+            if (historialAbonos.length === 0) {
+                historialAbonosEl.innerHTML = `<p class="text-gray-400 text-center py-2 italic text-[10px]">No hay abonos registrados aún.</p>`;
+                totalIngresosAcumuladoEl.textContent = `Acumulado: S/ 0.00`;
+                return;
+            }
+
+            historialAbonos.forEach((abono, index) => {
+                sumaAcumulada += abono.monto;
+                const fila = document.createElement('div');
+                fila.className = "flex justify-between items-center bg-[#F7F4EB] p-1.5 rounded-md border border-[#E6DFCE]";
+                fila.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-[9px] font-bold bg-[#7A1C2E] text-white px-1.5 py-0.5 rounded">${abono.fecha}</span>
+                        <span class="font-bold text-[#2A2A2A] text-xs">${abono.descripcion}</span>
+                        ${abono.tieneComprobante ? '<span class="text-[9px]" title="Comprobante adjuntado">📎</span>' : ''}
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-black text-green-700 text-xs">+S/ ${abono.monto.toFixed(2)}</span>
+                        <button onclick="eliminarAbono(${index})" class="text-gray-400 hover:text-red-600 text-[10px]"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                historialAbonosEl.prepend(fila);
+            });
+
+            totalIngresosAcumuladoEl.textContent = `Acumulado: S/ ${sumaAcumulada.toFixed(2)}`;
+        }
+
+        function eliminarAbono(index) {
+            if (!confirm("¿Deseas eliminar este ingreso?")) return;
+            const montoAEliminar = historialAbonos[index].monto;
+            historialAbonos.splice(index, 1);
+            ahorroDisponible = Math.max(0, ahorroDisponible - montoAEliminar);
+            actualizarVista();
+        }
+
+        function eliminarGasto(indexGasto) {
+            if (!confirm("¿Eliminar este compromiso de la lista?")) return;
+            agendaGastos.splice(indexGasto, 1);
+            actualizarVista();
+        }
+
         function actualizarVista() {
             const pendientes = agendaGastos.filter(g => g.estado !== "PAGADO");
             pendientes.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
             localStorage.setItem(KEY_GASTOS, JSON.stringify(agendaGastos));
             localStorage.setItem(KEY_AHORRO, ahorroDisponible.toString());
+            localStorage.setItem(KEY_HISTORIAL_ABONOS, JSON.stringify(historialAbonos));
 
             let sumaTotalPendiente = 0;
             const resumenCats = {};
@@ -277,7 +435,8 @@
             pendientes.forEach(g => {
                 const monto = parseFloat(g.monto);
                 sumaTotalPendiente += monto;
-                resumenCats[g.categoria] = (resumenCats[g.categoria] || 0) + monto;
+                const catNombre = g.categoria.trim() || "Otros";
+                resumenCats[catNombre] = (resumenCats[catNombre] || 0) + monto;
             });
 
             totalRequeridoEl.textContent = `S/ ${sumaTotalPendiente.toFixed(2)}`;
@@ -291,11 +450,14 @@
                 for (const [cat, monto] of Object.entries(resumenCats)) {
                     const badge = document.createElement('div');
                     badge.className = "bg-white border border-[#E6DFCE] px-2.5 py-1 rounded-lg shrink-0 shadow-sm";
-                    badge.innerHTML = `<span class="block text-[9px] font-bold text-gray-500">${cat.split(' ')[0]} ${cat.split(' ')[1] || ''}</span><span class="font-black text-[#7A1C2E]">S/ ${monto.toFixed(2)}</span>`;
+                    badge.innerHTML = `<span class="block text-[9px] font-bold text-gray-500">${cat}</span><span class="font-black text-[#7A1C2E]">S/ ${monto.toFixed(2)}</span>`;
                     resumenCategoriasEl.appendChild(badge);
                 }
             }
 
+            calcularCuotaDinamica();
+            verificarAbonoHoy();
+            renderizarHistorialAbonos();
             listaGastos.innerHTML = '';
 
             if (pendientes.length === 0) {
@@ -304,13 +466,15 @@
                 badgeEstado.textContent = "Sin metas";
                 barraCobertura.style.width = "0%";
                 txtDetalleCobertura.textContent = "Agenda un nuevo compromiso para iniciar.";
+                boxMotivacion.classList.add('hidden');
                 return;
             }
 
             let saldoRestante = ahorroDisponible;
-            let metaActivaEcontrada = false;
+            let metaActivaEncontrada = false;
 
             pendientes.forEach((gasto) => {
+                const indexReal = agendaGastos.indexOf(gasto);
                 const montoGasto = parseFloat(gasto.monto);
                 const partesFecha = gasto.fecha.split('-');
                 const fechaFormateada = `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]}`;
@@ -323,15 +487,26 @@
                     saldoRestante -= montoGasto;
                     estadoClase = "bg-green-50 border-green-300";
                     badgeHTML = `<span class="text-[9px] font-black bg-green-200 text-green-900 px-1.5 py-0.5 rounded">Cubierto</span>`;
-                } else if (!metaActivaEcontrada) {
-                    metaActivaEcontrada = true;
+                } else if (!metaActivaEncontrada) {
+                    metaActivaEncontrada = true;
                     const faltante = montoGasto - saldoRestante;
                     const porcentaje = Math.min((saldoRestante / montoGasto) * 100, 100);
 
                     lblProximoObjetivo.textContent = `Próximo: ${fechaFormateada}`;
                     badgeEstado.textContent = `EN ENFOQUE 🎯`;
                     barraCobertura.style.width = `${porcentaje}%`;
-                    txtDetalleCobertura.innerHTML = `S/ ${saldoRestante.toFixed(2)} de S/ ${montoGasto.toFixed(2)}. <span class="text-yellow-300 font-bold">Faltan S/ ${faltante.toFixed(2)}</span>`;
+                    txtDetalleCobertura.innerHTML = `S/ ${saldoRestante.toFixed(2)} de S/ ${montoGasto.toFixed(2)}. <span class="text-yellow-300 font-bold">Resta S/ ${faltante.toFixed(2)}</span>`;
+
+                    boxMotivacion.classList.remove('hidden');
+                    if (porcentaje === 0) {
+                        txtMotivacion.textContent = `💪 ¡Arrancamos! Junta tus primeros soles para este objetivo.`;
+                    } else if (porcentaje < 50) {
+                        txtMotivacion.textContent = `🔥 ¡Paso a paso! Ya avanzaste el ${porcentaje.toFixed(0)}%. ¡Sigue abonando!`;
+                    } else if (porcentaje < 100) {
+                        txtMotivacion.textContent = `⚡ ¡Falta casi nada! Solo S/ ${faltante.toFixed(2)} para dejarlo saldado.`;
+                    } else {
+                        txtMotivacion.textContent = `🏆 ¡Garra y huevo! Cobertura lista para este pago.`;
+                    }
 
                     saldoRestante = 0;
                     estadoClase = "bg-white border-[#D4AF37] ring-2 ring-[#D4AF37]/50 shadow-md";
@@ -348,66 +523,97 @@
                         <div class="flex items-center space-x-1.5">
                             ${badgeHTML}
                             <span class="text-[9px] px-1.5 py-0.5 rounded ${alerta.clase}">${alerta.texto}</span>
-                            <span class="text-[9px] font-bold text-gray-400">${fechaFormateada}</span>
+                            ${gasto.recurrente ? '<span class="text-[8px] bg-blue-100 text-blue-800 font-bold px-1 rounded">Mensual 🔁</span>' : ''}
                         </div>
                         <p class="font-bold text-[#2A2A2A] text-xs leading-tight">${gasto.descripcion || gasto.categoria}</p>
+                        <span class="text-[9px] text-gray-400 font-bold block">${gasto.categoria} (${fechaFormateada})</span>
                     </div>
                     <div class="text-right space-y-1">
                         <span class="text-xs font-black text-[#7A1C2E] font-tribuna block">S/ ${montoGasto.toFixed(2)}</span>
-                        <button onclick="liquidarGasto('${gasto.fecha}', ${montoGasto}, '${gasto.descripcion}')" class="bg-[#7A1C2E] hover:bg-green-700 text-white text-[9px] font-black px-2 py-0.5 rounded transition-colors uppercase">
-                            Pagar
-                        </button>
+                        <div class="flex space-x-1">
+                            <button onclick="liquidarGasto(${indexReal})" class="bg-[#7A1C2E] hover:bg-green-700 text-white text-[9px] font-black px-2 py-0.5 rounded transition-colors uppercase">
+                                Pagar
+                            </button>
+                            <button onclick="eliminarGasto(${indexReal})" class="text-gray-400 hover:text-red-600 px-1 text-[10px]">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </div>
                 `;
                 listaGastos.appendChild(card);
             });
         }
 
-        async function liquidarGasto(fecha, monto, descripcion) {
+        async function liquidarGasto(index) {
+            const gasto = agendaGastos[index];
+            const monto = parseFloat(gasto.monto);
+
             if (ahorroDisponible < monto) {
-                if (!confirm(`Tu saldo disponible (S/ ${ahorroDisponible.toFixed(2)}) es menor al gasto. ¿Deseas pagarlo igualmente?`)) return;
+                if (!confirm(`Tu saldo (S/ ${ahorroDisponible.toFixed(2)}) es menor al gasto. ¿Marcar como pagado de todos modos?`)) return;
             }
 
             ahorroDisponible -= monto;
-            const index = agendaGastos.findIndex(g => g.fecha === fecha && parseFloat(g.monto) === monto && g.descripcion === descripcion);
-            if (index !== -1) agendaGastos[index].estado = "PAGADO";
+            gasto.estado = "PAGADO";
+
+            if (gasto.recurrente) {
+                const partes = gasto.fecha.split('-');
+                let mes = parseInt(partes[1]) + 1;
+                let anio = parseInt(partes[0]);
+                if (mes > 12) { mes = 1; anio++; }
+                const mesStr = mes < 10 ? `0${mes}` : `${mes}`;
+
+                agendaGastos.push({
+                    categoria: gasto.categoria,
+                    fecha: `${anio}-${mesStr}-${partes[2]}`,
+                    monto: gasto.monto,
+                    descripcion: gasto.descripcion,
+                    recurrente: true,
+                    estado: "PENDIENTE"
+                });
+            }
 
             actualizarVista();
-            await enviarAGoogleSheets({ tipo: "PAGO_REALIZADO", monto: monto, descripcion: `PAGADO: ${descripcion}`, fecha: fecha, estado: "PAGADO" });
+            await enviarAGoogleSheets({ tipo: "PAGO_REALIZADO", monto: monto, descripcion: `PAGADO: ${gasto.descripcion}`, fecha: gasto.fecha, estado: "PAGADO" });
         }
 
         btnAbonar.addEventListener('click', async () => {
             const monto = parseFloat(montoAbonoInput.value);
-            const desc = descAbonoInput.value.trim() || "Abono a bolsa";
+            const desc = descAbonoInput.value.trim() || "Cuota diaria";
+            const tieneArchivo = fileComprobanteInput.files.length > 0;
+            const hoyStr = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
 
             if (isNaN(monto) || monto <= 0) return alert("Ingresa un monto válido.");
+            if (!tieneArchivo) return alert("⚠️ MODO ESTRICTO: Para guardar tu abono debes adjuntar la captura/foto del comprobante.");
 
             ahorroDisponible += monto;
-            montoAbonoInput.value = ''; descAbonoInput.value = '';
+            historialAbonos.push({ fecha: hoyStr, monto: monto, descripcion: desc, tieneComprobante: tieneArchivo });
+
+            montoAbonoInput.value = ''; descAbonoInput.value = ''; fileComprobanteInput.value = '';
 
             actualizarVista();
-            await enviarAGoogleSheets({ tipo: "ABONO", monto: monto, descripcion: desc, estado: "COMPLETADO" });
+            await enviarAGoogleSheets({ tipo: "ABONO", monto: monto, descripcion: desc, estado: "COMPLETADO", tieneComprobante: tieneArchivo });
         });
 
         btnAgregar.addEventListener('click', async () => {
-            const cat = categoriaInput.value;
+            const cat = categoriaInput.value.trim() || "General";
             const fecha = fechaPagoInput.value;
             const monto = parseFloat(montoPagoInput.value);
             const desc = descripcionPagoInput.value.trim();
+            const esRecurrente = chkRecurrente.checked;
 
             if (!fecha || isNaN(monto) || monto <= 0) return alert("Fecha y monto requeridos.");
 
-            const nuevoGasto = { categoria: cat, fecha: fecha, monto: monto, descripcion: desc, estado: "PENDIENTE" };
+            const nuevoGasto = { categoria: cat, fecha: fecha, monto: monto, descripcion: desc, recurrente: esRecurrente, estado: "PENDIENTE" };
             agendaGastos.push(nuevoGasto);
 
-            montoPagoInput.value = ''; descripcionPagoInput.value = '';
+            montoPagoInput.value = ''; descripcionPagoInput.value = ''; categoriaInput.value = ''; chkRecurrente.checked = false;
 
             actualizarVista();
             await enviarAGoogleSheets({ tipo: "GASTO_PROGRAMADO", ...nuevoGasto });
         });
 
         async function cargarDesdeGoogleSheets() {
-            if (!SCRIPT_URL || SCRIPT_URL.includes("REEMPLAZA_CON_TU_URL")) return;
+            if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbxiXsbHDAU0WlgAe5hzQ9LuHJpzrC2ShKssKj31iHRvDnAx0LFmD8nH748IGBDKMUrkFg/exec")) return;
 
             try {
                 btnSincronizar.classList.add('fa-spin');
@@ -419,39 +625,15 @@
                     localStorage.setItem(KEY_CONFIG, JSON.stringify(configUsuario));
                     lblSaludo.textContent = `Hola, ${configUsuario.nombre}`;
                 }
-
-                if (Array.isArray(data.movimientos)) {
-                    agendaGastos = [];
-                    let bolsaCalculada = 0;
-
-                    data.movimientos.forEach(item => {
-                        if (item.tipo === "ABONO") {
-                            bolsaCalculada += item.monto;
-                        } else if (item.tipo === "PAGO_REALIZADO") {
-                            bolsaCalculada -= item.monto;
-                        } else if (item.tipo === "GASTO_PROGRAMADO" && item.estado !== "PAGADO") {
-                            agendaGastos.push({
-                                categoria: item.categoria,
-                                fecha: item.fecha,
-                                monto: item.monto,
-                                descripcion: item.descripcion,
-                                estado: item.estado
-                            });
-                        }
-                    });
-
-                    ahorroDisponible = Math.max(bolsaCalculada, 0);
-                    actualizarVista();
-                }
             } catch (err) {
                 console.error("Error cargando desde Sheets:", err);
-            } finally {
+            } font-medium {
                 btnSincronizar.classList.remove('fa-spin');
             }
         }
 
         async function enviarAGoogleSheets(payload) {
-            if (!SCRIPT_URL || SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbwBCvnGxa8eIxmdFrWhjQlKlJqRf7etHv_DbuaNfqLUUbCXqeLdg1pGsuGa5kpz42He/exec")) return;
+            if (!SCRIPT_URL || SCRIPT_URL.includes("TU_URL_DE_APPS_SCRIPT")) return;
 
             try {
                 iconoLoading.classList.remove('hidden');
