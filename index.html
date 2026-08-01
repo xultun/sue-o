@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Garra Control Pro - Cuota Inteligente y Disciplina</title>
+    <!-- PWA Config -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7A1C2E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -80,6 +83,11 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
+                <!-- CONTADOR DE RACHA (FASE 4) -->
+                <div class="bg-amber-100 border border-amber-300 text-amber-900 px-2 py-1 rounded-xl flex items-center space-x-1" title="Días consecutivos abonando a tiempo">
+                    <span class="text-xs">🔥</span>
+                    <span id="lbl-racha" class="text-xs font-black font-tribuna">0d</span>
+                </div>
                 <button onclick="abrirConfiguracion()" class="text-lg text-gray-400 hover:text-[#7A1C2E] transition-colors" title="Configurar perfil y alertas">
                     <i class="fas fa-cog"></i>
                 </button>
@@ -97,9 +105,17 @@
                     <span id="total-requerido" class="text-xl font-black font-tribuna text-white">S/ 0.00</span>
                 </div>
                 <div class="text-right">
-                    <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#D4AF37] block">Fondo Disponible</span>
+                    <span class="text-[10px] uppercase tracking-wider font-extrabold text-[#D4AF37] block">Fondo Metas</span>
                     <span id="total-ahorrado" class="text-xl font-black font-tribuna text-green-400">S/ 0.00</span>
                 </div>
+            </div>
+
+            <!-- MONTO CAJA CHICA / FONDO RESERVA (FASE 3) -->
+            <div class="flex justify-between items-center bg-black/20 px-3 py-1.5 rounded-xl border border-[#D4AF37]/20 text-xs">
+                <span class="text-gray-300 font-bold text-[10px] uppercase flex items-center gap-1">
+                    🛡️ Caja Chica (10% Imprevistos)
+                </span>
+                <span id="lbl-caja-chica" class="font-black text-[#D4AF37] font-tribuna">S/ 0.00</span>
             </div>
 
             <!-- Meta Inmediata -->
@@ -160,11 +176,16 @@
             </button>
         </div>
 
-        <!-- HISTORIAL DE ABONOS -->
+        <!-- HISTORIAL DE ABONOS + BOTÓN CIERRE DE MES (FASE 4) -->
         <div class="bg-white p-3 rounded-xl border border-[#E6DFCE] space-y-1.5 shadow-sm">
             <div class="flex justify-between items-center">
-                <h3 class="text-[10px] font-black text-[#7A1C2E] uppercase tracking-wider font-tribuna">📈 Cronograma de Ingresos Diarios</h3>
-                <span id="total-ingresos-acumulado" class="text-[10px] font-black text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">Acumulado: S/ 0.00</span>
+                <h3 class="text-[10px] font-black text-[#7A1C2E] uppercase tracking-wider font-tribuna">📈 Cronograma de Ingresos</h3>
+                <div class="flex items-center space-x-1">
+                    <span id="total-ingresos-acumulado" class="text-[10px] font-black text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">Acum: S/ 0.00</span>
+                    <button onclick="ejecutarCierreDeMes()" class="text-[9px] bg-gray-100 hover:bg-red-100 text-gray-700 hover:text-red-700 font-bold px-1.5 py-0.5 rounded border border-gray-300 transition-colors" title="Archivar abonos pasados">
+                        🧹 Cierre
+                    </button>
+                </div>
             </div>
             <div id="historial-abonos" class="max-h-28 overflow-y-auto space-y-1 text-xs"></div>
         </div>
@@ -225,12 +246,15 @@
 
         const KEY_GASTOS = 'garra_gastos_v6';
         const KEY_AHORRO = 'garra_ahorro_v6';
+        const KEY_CAJA_CHICA = 'garra_caja_chica_v6';
         const KEY_HISTORIAL_ABONOS = 'garra_abonos_v6';
         const KEY_CONFIG = 'garra_config_v6';
+        const KEY_RACHA = 'garra_racha_v6';
 
         let agendaGastos = JSON.parse(localStorage.getItem(KEY_GASTOS)) || [];
         let historialAbonos = JSON.parse(localStorage.getItem(KEY_HISTORIAL_ABONOS)) || [];
         let ahorroDisponible = parseFloat(localStorage.getItem(KEY_AHORRO)) || 0.00;
+        let cajaChica = parseFloat(localStorage.getItem(KEY_CAJA_CHICA)) || 0.00;
         let configUsuario = JSON.parse(localStorage.getItem(KEY_CONFIG)) || null;
 
         // Elementos DOM
@@ -238,6 +262,8 @@
         const lblSaludo = document.getElementById('lbl-saludo');
         const totalRequeridoEl = document.getElementById('total-requerido');
         const totalAhorradoEl = document.getElementById('total-ahorrado');
+        const lblCajaChica = document.getElementById('lbl-caja-chica');
+        const lblRacha = document.getElementById('lbl-racha');
         const lblProximoObjetivo = document.getElementById('lbl-proximo-objetivo');
         const badgeEstado = document.getElementById('badge-estado');
         const barraCobertura = document.getElementById('barra-cobertura');
@@ -309,8 +335,58 @@
         }
 
         // ==========================================
-        // LÓGICA DE CUOTA DIARIA DINÁMICA / INTELIGENTE
+        // CÁLCULO DE RACHA DE CUMPLIMIENTO (FASE 4)
         // ==========================================
+        function calcularRacha() {
+            if (historialAbonos.length === 0) {
+                lblRacha.textContent = "0d";
+                return;
+            }
+
+            const fechasAbonadas = [...new Set(historialAbonos.map(a => a.fechaISO))].sort().reverse();
+            if (fechasAbonadas.length === 0) {
+                lblRacha.textContent = "0d";
+                return;
+            }
+
+            let racha = 0;
+            let hoy = new Date();
+            hoy.setHours(0,0,0,0);
+
+            for (let i = 0; i < fechasAbonadas.length; i++) {
+                const partes = fechasAbonadas[i].split('-');
+                const fechaAbono = new Date(partes[0], partes[1] - 1, partes[2]);
+                
+                const difDias = Math.round((hoy - fechaAbono) / (1000 * 60 * 60 * 24));
+
+                if (i === 0 && difDias > 1) {
+                    // Se rompió la racha si pasaron más de 24h sin abonar
+                    break;
+                }
+
+                racha++;
+                hoy = fechaAbono;
+            }
+
+            lblRacha.textContent = `${racha}d`;
+        }
+
+        // ==========================================
+        // CIERRE DE MES AUTOMÁTICO (FASE 4)
+        // ==========================================
+        function ejecutarCierreDeMes() {
+            if (!confirm("🧹 ¿Deseas hacer el Cierre de Mes?\n\nEsto archivará tus abonos pasados de la vista rápida pero MANTENDRÁ tus saldos e imprevistos intactos.")) return;
+
+            const hoy = new Date();
+            const mesActualStr = `${hoy.getFullYear()}-${(hoy.getMonth() + 1).toString().padStart(2, '0')}`;
+
+            // Conservamos solo los abonos del mes actual
+            historialAbonos = historialAbonos.filter(a => a.fechaISO && a.fechaISO.startsWith(mesActualStr));
+
+            actualizarVista();
+            alert("✨ Cierre realizado: Vista de historial despejada para el nuevo mes.");
+        }
+
         function calcularCuotaDinamica() {
             const hoy = new Date();
             hoy.setHours(0,0,0,0);
@@ -373,8 +449,8 @@
         }
 
         function verificarAbonoHoy() {
-            const hoyStr = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
-            const abonadoHoy = historialAbonos.some(a => a.fecha === hoyStr);
+            const hoyISO = new Date().toISOString().split('T')[0];
+            const abonadoHoy = historialAbonos.some(a => a.fechaISO === hoyISO);
 
             if (abonadoHoy) {
                 badgeCumplimiento.className = "text-[9px] font-black bg-green-100 text-green-800 px-2 py-0.5 rounded uppercase";
@@ -390,13 +466,13 @@
             let sumaAcumulada = 0;
 
             if (historialAbonos.length === 0) {
-                historialAbonosEl.innerHTML = `<p class="text-gray-400 text-center py-2 italic text-[10px]">No hay abonos registrados aún.</p>`;
-                totalIngresosAcumuladoEl.textContent = `Acumulado: S/ 0.00`;
+                historialAbonosEl.innerHTML = `<p class="text-gray-400 text-center py-2 italic text-[10px]">No hay abonos registrados en el período.</p>`;
+                totalIngresosAcumuladoEl.textContent = `Acum: S/ 0.00`;
                 return;
             }
 
             historialAbonos.forEach((abono, index) => {
-                sumaAcumulada += abono.monto;
+                sumaAcumulada += abono.montoTotal;
                 const fila = document.createElement('div');
                 fila.className = "flex justify-between items-center bg-[#F7F4EB] p-1.5 rounded-md border border-[#E6DFCE]";
                 fila.innerHTML = `
@@ -406,21 +482,24 @@
                         ${abono.tieneComprobante ? '<span class="text-[9px]" title="Comprobante adjuntado">📎</span>' : ''}
                     </div>
                     <div class="flex items-center space-x-2">
-                        <span class="font-black text-green-700 text-xs">+S/ ${abono.monto.toFixed(2)}</span>
+                        <span class="font-black text-green-700 text-xs">+S/ ${abono.montoMeta.toFixed(2)}</span>
+                        <span class="text-[9px] font-bold text-[#D4AF37]" title="Aportado a Caja Chica">(🛡️ S/ ${abono.montoCajaChica.toFixed(2)})</span>
                         <button onclick="eliminarAbono(${index})" class="text-gray-400 hover:text-red-600 text-[10px]"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
                 historialAbonosEl.prepend(fila);
             });
 
-            totalIngresosAcumuladoEl.textContent = `Acumulado: S/ ${sumaAcumulada.toFixed(2)}`;
+            totalIngresosAcumuladoEl.textContent = `Acum: S/ ${sumaAcumulada.toFixed(2)}`;
         }
 
         function eliminarAbono(index) {
             if (!confirm("¿Deseas eliminar este ingreso?")) return;
-            const montoAEliminar = historialAbonos[index].monto;
+            const abono = historialAbonos[index];
+            ahorroDisponible = Math.max(0, ahorroDisponible - abono.montoMeta);
+            cajaChica = Math.max(0, cajaChica - abono.montoCajaChica);
+            
             historialAbonos.splice(index, 1);
-            ahorroDisponible = Math.max(0, ahorroDisponible - montoAEliminar);
             actualizarVista();
         }
 
@@ -436,6 +515,7 @@
 
             localStorage.setItem(KEY_GASTOS, JSON.stringify(agendaGastos));
             localStorage.setItem(KEY_AHORRO, ahorroDisponible.toString());
+            localStorage.setItem(KEY_CAJA_CHICA, cajaChica.toString());
             localStorage.setItem(KEY_HISTORIAL_ABONOS, JSON.stringify(historialAbonos));
 
             let sumaTotalPendiente = 0;
@@ -450,6 +530,7 @@
 
             totalRequeridoEl.textContent = `S/ ${sumaTotalPendiente.toFixed(2)}`;
             totalAhorradoEl.textContent = `S/ ${ahorroDisponible.toFixed(2)}`;
+            lblCajaChica.textContent = `S/ ${cajaChica.toFixed(2)}`;
             cantItemsEl.textContent = `${pendientes.length} pendiente(s)`;
 
             resumenCategoriasEl.innerHTML = '';
@@ -464,6 +545,7 @@
                 }
             }
 
+            calcularRacha();
             calcularCuotaDinamica();
             verificarAbonoHoy();
             renderizarHistorialAbonos();
@@ -585,22 +667,49 @@
             await enviarAGoogleSheets({ tipo: "PAGO_REALIZADO", monto: monto, descripcion: `PAGADO: ${gasto.descripcion}`, fecha: gasto.fecha, estado: "PAGADO" });
         }
 
+        // ==========================================
+        // REGISTRO DE ABONO CON REGLA 10% CAJA CHICA (FASE 3)
+        // ==========================================
         btnAbonar.addEventListener('click', async () => {
-            const monto = parseFloat(montoAbonoInput.value);
+            const montoTotalInput = parseFloat(montoAbonoInput.value);
             const desc = descAbonoInput.value.trim() || "Cuota diaria";
             const tieneArchivo = fileComprobanteInput.files.length > 0;
-            const hoyStr = new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
+            const fechaAhora = new Date();
+            const hoyStr = fechaAhora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit' });
+            const hoyISO = fechaAhora.toISOString().split('T')[0];
 
-            if (isNaN(monto) || monto <= 0) return alert("Ingresa un monto válido.");
+            if (isNaN(montoTotalInput) || montoTotalInput <= 0) return alert("Ingresa un monto válido.");
             if (!tieneArchivo) return alert("⚠️ MODO ESTRICTO: Para guardar tu abono debes adjuntar la captura/foto del comprobante.");
 
-            ahorroDisponible += monto;
-            historialAbonos.push({ fecha: hoyStr, monto: monto, descripcion: desc, tieneComprobante: tieneArchivo });
+            // Desglose 90% Fondo Principal / 10% Caja Chica
+            const montoCajaChicaCalc = parseFloat((montoTotalInput * 0.10).toFixed(2));
+            const montoMetaCalc = parseFloat((montoTotalInput - montoCajaChicaCalc).toFixed(2));
+
+            ahorroDisponible += montoMetaCalc;
+            cajaChica += montoCajaChicaCalc;
+
+            historialAbonos.push({ 
+                fecha: hoyStr, 
+                fechaISO: hoyISO,
+                montoTotal: montoTotalInput,
+                montoMeta: montoMetaCalc,
+                montoCajaChica: montoCajaChicaCalc,
+                descripcion: desc, 
+                tieneComprobante: tieneArchivo 
+            });
 
             montoAbonoInput.value = ''; descAbonoInput.value = ''; fileComprobanteInput.value = '';
 
             actualizarVista();
-            await enviarAGoogleSheets({ tipo: "ABONO", monto: monto, descripcion: desc, estado: "COMPLETADO", tieneComprobante: tieneArchivo });
+            await enviarAGoogleSheets({ 
+                tipo: "ABONO", 
+                montoTotal: montoTotalInput,
+                montoMeta: montoMetaCalc,
+                montoCajaChica: montoCajaChicaCalc,
+                descripcion: desc, 
+                estado: "COMPLETADO", 
+                tieneComprobante: tieneArchivo 
+            });
         });
 
         btnAgregar.addEventListener('click', async () => {
@@ -657,6 +766,13 @@
             } finally {
                 iconoLoading.classList.add('hidden');
             }
+        }
+
+        // REGISTRO DE SERVICE WORKER PARA PWA (FASE 3)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW error:', err));
+            });
         }
 
         btnSincronizar.addEventListener('click', cargarDesdeGoogleSheets);
